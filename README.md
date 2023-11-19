@@ -66,3 +66,20 @@ docker run -it -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" -e PGADMIN_DEFAULT_PAS
 ```
 
 Go to `localhost:8080` and login with the credentials you provided.
+
+### 1.5. Data Ingestion
+
+Run locally:
+```bash
+python ingest_data.py --user=root --password=root --host=localhost --port=5432 --db=ny_taxi --table_name=yellow_taxi_trips
+```
+
+Build Docker image:
+```bash
+docker build -t taxi_ingest:v001 .
+```
+
+Run Docker image:
+```bash
+docker run -it --network=pg-network taxi_ingest:v001 --user=root --password=root --host=pg-database --port=5432 --db=ny_taxi --table_name=yellow_taxi_trips
+```
