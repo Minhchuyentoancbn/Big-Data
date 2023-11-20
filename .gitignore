@@ -3,3 +3,4 @@ data/*.csv
 data/*.pdf
 output.csv.gz
 data_pgadmin/
+data/*.json
