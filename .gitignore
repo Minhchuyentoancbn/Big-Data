@@ -4,3 +4,8 @@ data/*.pdf
 output.csv.gz
 data_pgadmin/
 data/*.json
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+NOTE.txt

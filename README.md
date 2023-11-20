@@ -9,6 +9,8 @@
 We assume that you have the following installed on your machine:
 - Docker
 - Python
+- Google Cloud SDK
+- Terraform
 
 ## 1. Introduction
 
@@ -17,6 +19,8 @@ We assume that you have the following installed on your machine:
 - Python
 - Docker
 - Postgres
+- Google Cloud Platform
+- Terraform
 
 ### 1.2. Ingesting NY Taxi Data to Postgres
 
@@ -75,4 +79,67 @@ docker-compose down
 __Note__: to make pgAdmin configuration persistent, create a folder `data_pgadmin`. Change its permission via
 ```bash
 sudo chown 5050:5050 data_pgadmin
+```
+
+### 1.5. Google Cloud Platform (GCP) and Terraform
+
+__GCP Initial Setup__
+
+- 1.Create an account with your Google email ID
+- 2.Setup your first project if you haven't already
+- 3.Setup service account & authentication for this project
+    - Grant Viewer role to begin with.
+    - Download service-account-keys (.json) for authentication and put it in the `data` folder.
+- 4.Download SDK for local setup
+- 5.Set environment variable to point to your downloaded GCP keys
+
+
+__Setup for Access__
+ 
+- 1.[IAM Roles](https://cloud.google.com/storage/docs/access-control/iam-roles) for Service account:
+   * Go to the *IAM* section of *IAM & Admin* https://console.cloud.google.com/iam-admin/iam
+   * Click the *Edit principal* icon for your service account.
+   * Add these roles in addition to *Viewer* : **Storage Admin** + **Storage Object Admin** + **BigQuery Admin**
+   
+- 2.Enable these APIs for your project:
+   * https://console.cloud.google.com/apis/library/iam.googleapis.com
+   * https://console.cloud.google.com/apis/library/iamcredentials.googleapis.com
+   
+- 3.Please ensure `GOOGLE_APPLICATION_CREDENTIALS` env-var is set.
+   ```shell
+   export GOOGLE_APPLICATION_CREDENTIALS="<path/to/your/service-account-authkeys>.json"
+   ```
+
+
+__Google Cloud SDK Authentication__
+
+Set `GOOGLE_APPLICATION_CREDENTIALS` to point to the file
+```bash
+export GOOGLE_APPLICATION_CREDENTIALS={your_path}/{your_file}.json
+```
+
+Now authenticate your SDK with your GCP account
+```bash
+gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+```
+
+
+__Terraform__
+
+Go to the `terraform` folder and run the following commands:
+```bash
+# Initialize state file (.tfstate)
+terraform init
+
+# Check changes to new infra plan
+terraform plan -var="project=<your-gcp-project-id>"
+
+# Or just
+terraform plan
+
+# Apply changes to new infra
+terraform apply
+
+# Delete infra after your work, to avoid costs on any running services
+terraform destroy
 ```
