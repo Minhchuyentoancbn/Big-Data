@@ -18,24 +18,7 @@ We assume that you have the following installed on your machine:
 - Docker
 - Postgres
 
-### 1.2. Docker
-
-Run the following command to build the docker image
-```
-docker build -t bigdata:1.0 .
-```
-
-Run the following command to run the docker image
-```
-docker run -it bigdata:1.0
-```
-
-### 1.3. Ingesting NY Taxi Data to Postgres
-
-Running Postgres in Docker:
-```bash
-docker run -it -e POSTGRES_USER="root" -e POSTGRES_PASSWORD="root" -e POSTGRES_DB="ny_taxi" -v G:/School/Bigdata/Project/ny_taxi_postgres_data:/var/lib/postgresql/data -p 5432:5432 postgres:13
-```
+### 1.2. Ingesting NY Taxi Data to Postgres
 
 Dataset:
 - https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page
@@ -43,14 +26,7 @@ Dataset:
 
 Download the dataset from the following [link](https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz) and place it in the `data` folder.
 
-Run the following command to ingest the data into Postgres:
-```bash
-python upload_data.py
-```
-
-### 1.4. Connecting pgAdmin and Postgres
-
-Create a network:
+Create a network for Postgres and pgAdmin:
 ```bash
 docker network create pg-network
 ```
@@ -67,7 +43,7 @@ docker run -it -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" -e PGADMIN_DEFAULT_PAS
 
 Go to `localhost:8080` and login with the credentials you provided.
 
-### 1.5. Data Ingestion
+### 1.3. Data Ingestion
 
 Run locally:
 ```bash
