@@ -71,3 +71,8 @@ To stop it:
 ```bash
 docker-compose down
 ```
+
+__Note__: to make pgAdmin configuration persistent, create a folder `data_pgadmin`. Change its permission via
+```bash
+sudo chown 5050:5050 data_pgadmin
+```
