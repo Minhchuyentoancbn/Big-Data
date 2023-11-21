@@ -1,8 +1,11 @@
 # Big Data Project - NYC Taxi Data Analysis
 
+
 ## Table of Contents
 - [0. Pre-requisites](#0-pre-requisites)
 - [1. Introduction](#1-introduction)
+- [2. Workflow Orchestration](#2-workflow-orchestration)
+
 
 ## 0. Pre-requisites
 
@@ -11,6 +14,7 @@ We assume that you have the following installed on your machine:
 - Python
 - Google Cloud SDK
 - Terraform
+
 
 ## 1. Introduction
 
@@ -21,6 +25,8 @@ We assume that you have the following installed on your machine:
 - Postgres
 - Google Cloud Platform
 - Terraform
+- Prefect
+
 
 ### 1.2. Ingesting NY Taxi Data to Postgres
 
@@ -47,6 +53,7 @@ docker run -it -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" -e PGADMIN_DEFAULT_PAS
 
 Go to `localhost:8080` and login with the credentials you provided.
 
+
 ### 1.3. Data Ingestion
 
 Run locally:
@@ -63,6 +70,7 @@ Run Docker image:
 ```bash
 docker run -it --rm --network=pg-network taxi_ingest:v002 --user=root --password=root --host=pg-database --port=5432 --db=ny_taxi --table_name=yellow_taxi_trips
 ```
+
 
 ### 1.4. Docker Compose
 
@@ -153,3 +161,30 @@ terraform apply
 # Delete infra after your work, to avoid costs on any running services
 terraform destroy
 ```
+
+## 2. Workflow Orchestration
+
+### 2.1. Prefect
+
+Install necessary packages:
+```bash
+pip install -r requirements.txt
+```
+
+Run prefect:
+```bash
+prefect orion start
+
+# Configure Prefect to communicate with the server
+prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api
+```
+
+Then, go to `http://127.0.0.1:4200` to see the dashboard. Configure the SQLAlchemy Block with name `postgres-connector`.
+
+Run ingestion workflow:
+```bash
+python ingest_data_flow.py
+```
+
+
+
