@@ -56,12 +56,12 @@ python ingest_data.py --user=root --password=root --host=localhost --port=5432 -
 
 Build Docker image:
 ```bash
-docker build -t taxi_ingest:v001 .
+docker build -t taxi_ingest:v002 .
 ```
 
 Run Docker image:
 ```bash
-docker run -it --network=pg-network taxi_ingest:v001 --user=root --password=root --host=pg-database --port=5432 --db=ny_taxi --table_name=yellow_taxi_trips
+docker run -it --rm --network=pg-network taxi_ingest:v002 --user=root --password=root --host=pg-database --port=5432 --db=ny_taxi --table_name=yellow_taxi_trips
 ```
 
 ### 1.4. Docker Compose
@@ -80,6 +80,16 @@ __Note__: to make pgAdmin configuration persistent, create a folder `data_pgadmi
 ```bash
 sudo chown 5050:5050 data_pgadmin
 ```
+
+To ingest data into Postgres, run the following command:
+```bash
+# Insert green taxi data
+docker run -it --rm --network=project_default taxi_ingest:v002 --user=root --password=root --host=project-pgdatabase-1 --port=5432 --db=ny_taxi --table_name=green_taxi_trips --url=https://github.com/DataTalksClub/nyc-tlc-data/releases/download/green/green_tripdata_2019-01.csv.gz
+
+# Insert zone lookup data
+docker run -it --rm --network=project_default taxi_ingest:v002 --user=root --password=root --host=project-pgdatabase-1 --port=5432 --db=ny_taxi --table_name=zone --url=https://s3.amazonaws.com/nyc-tlc/misc/taxi+_zone_lookup.csv
+```
+
 
 ### 1.5. Google Cloud Platform (GCP) and Terraform
 
