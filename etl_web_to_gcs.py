@@ -57,7 +57,7 @@ def write_gcs(path: Path):
 @flow()
 def etl_web_to_gcs():
     """
-    The main ERL function
+    The main ETL function to load data from the web to GCS
     """
     color = "yellow"
     year = 2021
