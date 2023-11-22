@@ -34,7 +34,7 @@ Dataset:
 - https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page
 - https://www1.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_yellow.pdf
 
-Download the dataset from the following [link](https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz) and place it in the `data` folder.
+You can download the dataset from the following [link](https://github.com/DataTalksClub/nyc-tlc-data) for our project.
 
 Create a network for Postgres and pgAdmin:
 ```bash
@@ -187,4 +187,24 @@ python ingest_data_flow.py
 ```
 
 
+### 2.2. ETL with GCP and Prefect
+
+Run prefect:
+```bash
+prefect orion start
+```
+
+Register a block with GCP
+```bash
+prefect block register -m prefect_gcp
+```
+
+Add a GCP Bucket Block and GCP Credentials Block (Optional) in the Prefect UI.
+
+Run ETL:
+```bash
+python etl_web_to_gcs.py
+```
+
+__NOTE__: Run terraform to initialize the GCP infrastructure before running the ETL.
 

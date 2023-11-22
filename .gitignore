@@ -1,13 +1,16 @@
 ny_taxi_postgres_data/
+
 data/*.csv
 data/*.pdf
-output.csv.gz
+data/yellow/*.parquet
 data_pgadmin/
 data/*.json
+
 terraform/.terraform/
 terraform/.terraform.lock.hcl
 terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
+
 NOTE.txt
 *.ipynb
 *.gz
