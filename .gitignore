@@ -5,6 +5,7 @@ data/*.pdf
 data/yellow/*.parquet
 data_pgadmin/
 data/*.json
+data/data/
 
 terraform/.terraform/
 terraform/.terraform.lock.hcl

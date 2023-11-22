@@ -208,3 +208,10 @@ python etl_web_to_gcs.py
 
 __NOTE__: Run terraform to initialize the GCP infrastructure before running the ETL.
 
+
+### 2.3. From Google Cloud Storage to Big Query
+
+Run ETL:
+```bash
+python etl_gcs_to_bq.py
+```
