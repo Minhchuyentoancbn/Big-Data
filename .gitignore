@@ -15,3 +15,5 @@ terraform/terraform.tfstate.backup
 NOTE.txt
 *.ipynb
 *.gz
+
+*__pycache__/
