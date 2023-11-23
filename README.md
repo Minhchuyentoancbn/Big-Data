@@ -175,4 +175,34 @@ prefect agent start --work-queue "default"
 
 ### 2.5. Schedules & Docker Storage with Infrastructure
 
+Build Docker image:
+```bash
+docker image build -t itgaming/bigdata-project:latest .
+```
 
+Push Docker image to Docker Hub:
+```bash
+docker image push itgaming/bigdata-project:latest
+```
+
+Create a Docker Container Block in the Prefect UI. Remember to config the Volumes as `C:/Users/Admin/.prefect/storage:/root/.prefect/storage`.
+
+Build and apply deployment with Docker Container:
+```bash
+python flows/docker_deploy.py
+```
+
+Run the Prefect Agent:
+```bash
+# Start agent
+prefect agent start -q default
+
+# Run deployment
+prefect deployment run etl-parent-flow/docker-flow -p "months=[1, 2]"
+```
+
+__NOTE:__ You should config the Prefect API URL before running the flow. If you don't, please run the following command:
+```bash
+# Configure Prefect to communicate with the server
+prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api
+```
