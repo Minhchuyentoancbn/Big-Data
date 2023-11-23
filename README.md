@@ -135,7 +135,7 @@ Add a GCP Bucket Block and GCP Credentials Block (Optional) in the Prefect UI.
 
 Run ETL:
 ```bash
-python etl_web_to_gcs.py
+python flows/etl_web_to_gcs.py
 ```
 
 __NOTE__: Run terraform to initialize the GCP infrastructure before running the ETL.
@@ -145,7 +145,7 @@ __NOTE__: Run terraform to initialize the GCP infrastructure before running the 
 
 Run ETL:
 ```bash
-python etl_gcs_to_bq.py
+python flows/etl_gcs_to_bq.py
 ```
 
 
@@ -153,13 +153,13 @@ python etl_gcs_to_bq.py
 
 Run flow:
 ```bash
-python parameterized_flow.py
+python flows/parameterized_flow.py
 ```
 
 Deployment:
 ```bash
 # Build deployment
-prefect deployment build parameterized_flow.py:etl_parent_flow -n "Parameterized ETL"
+prefect deployment build flows/parameterized_flow.py:etl_parent_flow -n "Parameterized ETL"
 
 # Apply deployment
 prefect deployment apply etl_parent_flow-deployment.yaml

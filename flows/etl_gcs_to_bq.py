@@ -11,13 +11,16 @@ def extract_from_gcs(color: str, year: int, month: int) -> Path:
     """
     Download the data from GCS
     """
-    gcs_path = Path(f"data/{color}/{color}_tripdata_{year}-{month:02}.parquet")
+    # gcs_path = Path(f"data/{color}/{color}_tripdata_{year}-{month:02}.parquet")
+    gcs_path = f"data/{color}/{color}_tripdata_{year}-{month:02}.parquet"
     gcs_block = GcsBucket.load("gcs-bucket")
     gcs_block.get_directory(
-        from_path=f"{gcs_path}",
+        # from_path=f"{gcs_path}",
+        from_path=gcs_path,
         local_path=f"data/"
     )
-    return Path(f"data/{gcs_path}")
+    # return Path(f"data/{gcs_path}")
+    return f"data/{gcs_path}"
 
 
 @task()
