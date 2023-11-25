@@ -17,21 +17,18 @@ def extract_from_gcs(color: str, year: int, month: int) -> Path:
     gcs_block.get_directory(
         # from_path=f"{gcs_path}",
         from_path=gcs_path,
-        local_path=f"data/"
+        local_path=f"../data/"
     )
     # return Path(f"data/{gcs_path}")
-    return f"data/{gcs_path}"
+    return f"../data/{gcs_path}"
 
 
 @task()
-def transform(path: Path) -> pd.DataFrame:
+def read(path) -> pd.DataFrame:
     """
-    Clean the data
+    Read the data into pandas
     """
     df = pd.read_parquet(path)
-    print(f"pre: missing passenger count: {df['passenger_count'].isna().sum()}")
-    df['passenger_count'] = df['passenger_count'].fillna(0)
-    print(f"post: missing passenger count: {df['passenger_count'].isna().sum()}")
     return df
 
 
@@ -42,28 +39,43 @@ def write_bq(df: pd.DataFrame):
     """
     credentials = GcpCredentials.load("gcp-creds")
     df.to_gbq(
-        destination_table="trips_data_all.yellow_tripdata",
+        destination_table="trips_data_all.rides",
         project_id="bigdata-405714",
         credentials=credentials.get_credentials_from_service_account(),
         chunksize=500_000,
         if_exists="append"
     )
-    return
+    return len(df)
 
 
 @flow()
-def etl_gcs_to_bq():
+def etl_gcs_to_bq(month: int, year: int, color: str):
     """
     The main ETL function to load data to BigQuery
     """
-    color = "yellow"
-    year = 2021
-    month = 1
 
     path = extract_from_gcs(color, year, month)
-    df = transform(path)
-    write_bq(df)
+    df = read(path)
+    row_count = write_bq(df)
+    return row_count
+
+
+@flow(log_prints=True)
+def el_parent_gcs_to_bq(
+    months: list[int] = [1, 2,],
+    year: int = 2021,
+    color: str = "yellow"
+):
+    """
+    Main EL Flow to load data into BigQuery
+    """
+    total_rows = 0
+    for month in months:
+        rows = etl_gcs_to_bq(month, year, color)
+        total_rows += rows
+    
+    print(f"Total rows: {total_rows}")
 
 
 if __name__ == "__main__":
-    etl_gcs_to_bq()
+    el_parent_gcs_to_bq(months=[2, 3], year=2019, color="yellow")

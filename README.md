@@ -1,13 +1,20 @@
 # Big Data Project - NYC Taxi Data Analysis
 
-
 ## Table of Contents
-- [0. Pre-requisites](#0-pre-requisites)
-- [1. Introduction](#1-introduction)
+- [Pre-requisites](#pre-requisites)
+- [1. Project Overview](#1-project-overview)
+   - [1.1. Technologies Used](#11-technologies-used)
+   - [1.2. Dataset](#12-dataset)
+   - [1.3. Google Cloud Platform (GCP)](#13-google-cloud-platform-gcp)
+   - [1.4. Terraform](#14-terraform)
 - [2. Workflow Orchestration](#2-workflow-orchestration)
+   - [2.1. Prefect](#21-prefect)
+   - [2.2. From Web to Google Cloud Storage (GCS)](#22-from-web-to-google-cloud-storage-gcs)
+   - [2.3. From Google Cloud Storage to Big Query](#23-from-google-cloud-storage-to-big-query)
+   - [2.5. Schedules & Docker Storage with Infrastructure](#25-schedules--docker-storage-with-infrastructure)
 
 
-## 0. Pre-requisites
+## Pre-requisites
 
 We assume that you have the following installed on your machine:
 - Docker
@@ -16,7 +23,7 @@ We assume that you have the following installed on your machine:
 - Terraform
 
 
-## 1. Introduction
+## 1. Project Overview
 
 ### 1.1. Technologies Used
 
@@ -31,12 +38,11 @@ We assume that you have the following installed on your machine:
 
 Dataset:
 - https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page
-- https://www1.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_yellow.pdf
 
 We will use the dataset from the following [link](https://github.com/DataTalksClub/nyc-tlc-data) for our project.
 
 
-### 1.3. Google Cloud Platform (GCP) and Terraform
+### 1.3. Google Cloud Platform (GCP)
 
 __GCP Initial Setup__
 
@@ -79,7 +85,7 @@ gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
 ```
 
 
-__Terraform__
+### 1.4. Terraform
 
 Go to the `terraform` folder and run the following commands:
 ```bash
@@ -99,16 +105,19 @@ terraform apply
 terraform destroy
 ```
 
+
 ## 2. Workflow Orchestration
 
 ### 2.1. Prefect
+
+__Prefect Local Setup__
 
 Install necessary packages:
 ```bash
 pip install -r requirements.txt
 ```
 
-Run prefect:
+Run prefect, then go to `http://127.0.0.1:4200` to see the dashboard.
 ```bash
 prefect orion start
 
@@ -116,26 +125,52 @@ prefect orion start
 prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api
 ```
 
-Then, go to `http://127.0.0.1:4200` to see the dashboard.
+
+__Prefect Cloud Setup__
+
+Run prefect then go to the app to see the dashboard.
+```bash
+# Login to Prefect Cloud
+prefect cloud login
+```
 
 
-### 2.2. ETL with GCP and Prefect
+### 2.2. From Web to Google Cloud Storage (GCS)
 
-Run prefect:
+If you choose to run the flow locally, run the following command to start the Prefect server:
 ```bash
 prefect orion start
 ```
 
-Register a block with GCP
-```bash
-prefect block register -m prefect_gcp
-```
-
 Add a GCP Bucket Block and GCP Credentials Block (Optional) in the Prefect UI.
 
-Run ETL:
+Run flow locally:
 ```bash
 python flows/etl_web_to_gcs.py
+```
+
+Deployment:
+```bash
+# Build deployment
+prefect deployment build flows/etl_web_to_gcs.py:etl_parent_web_to_gcs -n "ETL Web to GCS"
+
+# Apply deployment
+prefect deployment apply etl_parent_web_to_gcs-deployment.yaml
+```
+
+Or run the following command for short:
+```bash
+prefect deployment build flows/etl_web_to_gcs.py:etl_parent_web_to_gcs -n "ETL Web to GCS" -a
+```
+
+Go to `Deployments` in the Prefect UI to see the deployment. Then, run the deployment directly from the UI. Or you can run the deployment from the command line:
+```bash
+prefect deployment run 'etl-parent-web-to-gcs/ETL Web to GCS' -p 'months=[1, 2]' -p 'year=2019'
+```
+
+Then run the `Work Queues` as below:
+```bash
+prefect agent start --work-queue "default"
 ```
 
 __NOTE__: Run terraform to initialize the GCP infrastructure before running the ETL.
@@ -143,31 +178,31 @@ __NOTE__: Run terraform to initialize the GCP infrastructure before running the 
 
 ### 2.3. From Google Cloud Storage to Big Query
 
-Run ETL:
+Run flow locally:
 ```bash
 python flows/etl_gcs_to_bq.py
-```
-
-
-### 2.4. Parametrizing Flow & Deployments
-
-Run flow:
-```bash
-python flows/parameterized_flow.py
 ```
 
 Deployment:
 ```bash
 # Build deployment
-prefect deployment build flows/parameterized_flow.py:etl_parent_flow -n "Parameterized ETL"
+prefect deployment build flows/etl_gcs_to_bq.py:el_parent_gcs_to_bq -n "ETL GCS to BQ"
 
 # Apply deployment
-prefect deployment apply etl_parent_flow-deployment.yaml
+prefect deployment apply el_parent_gcs_to_bq-deployment.yaml
 ```
 
-Go to `Deployments` in the Prefect UI to see the deployment. Then, run the deployment.
+Or run the following command for short:
+```bash
+prefect deployment build flows/etl_gcs_to_bq.py:el_parent_gcs_to_bq -n "ETL GCS to BQ" -a
+```
 
-Run the `Work Queues`:
+Go to `Deployments` in the Prefect UI to see the deployment. Then, run the deployment directly from the UI. Or you can run the deployment from the command line:
+```bash
+prefect deployment run 'el-parent-gcs-to-bq/ETL GCS to BQ' -p 'months=[1, 2]' -p 'year=2019'
+```
+
+Then run the `Work Queues` as below:
 ```bash
 prefect agent start --work-queue "default"
 ```
@@ -200,6 +235,12 @@ prefect agent start -q default
 # Run deployment
 prefect deployment run etl-parent-flow/docker-flow -p "months=[1, 2]"
 ```
+
+Run EL data from GCS to BQ and then go to the Prefect UI to run the deployment.
+```bash
+prefect deployment build flows/etl_gcs_to_bq.py:el_parent_gcs_to_bq -n etl_gcs_to_bq -a
+```
+
 
 __NOTE:__ You should config the Prefect API URL before running the flow. If you don't, please run the following command:
 ```bash

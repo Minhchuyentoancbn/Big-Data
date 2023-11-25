@@ -1,30 +1,17 @@
 ###
-### A complete description of a Prefect Deployment for flow 'etl-parent-flow'
+### A complete description of a Prefect Deployment for flow 'el-parent-gcs-to-bq'
 ###
-name: Parameterized ETL
-description: null
-version: 373ae2512d67ea009d300185d37ff42f
+name: ETL GCS to BQ
+description: Main EL Flow to load data into BigQuery
+version: 643fafa63697cd8f2d0063fffdd5a1c3
 # The work queue that will handle this deployment's runs
 work_queue_name: default
+work_pool_name: null
+work_pool_queue_name: null
 tags: []
-parameters:
-  color: yellow
-  months:
-  - 1
-  - 2
-  - 3
-  year: 2021
-schedule:
-  interval: 300.0
-  anchor_date: '2023-11-23T03:19:50.010000+00:00'
-  timezone: UTC
+parameters: {}
+schedule: null
 infra_overrides: {}
-
-###
-### DO NOT EDIT BELOW THIS LINE
-###
-flow_name: etl-parent-flow
-manifest_path: null
 infrastructure:
   type: process
   env: {}
@@ -33,14 +20,17 @@ infrastructure:
   command: null
   stream_output: true
   working_dir: null
-  _block_document_id: 997c471a-2bcd-43ae-b42f-d78e474336d4
-  _block_document_name: anonymous-ca531ae8-f41c-4b99-aa1e-79da40ec9088
-  _is_anonymous: true
   block_type_slug: process
   _block_type_slug: process
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: el-parent-gcs-to-bq
+manifest_path: null
 storage: null
 path: G:\School\Bigdata\Project
-entrypoint: flows\parameterized_flow.py:etl_parent_flow
+entrypoint: flows\etl_gcs_to_bq.py:el_parent_gcs_to_bq
 parameter_openapi_schema:
   title: Parameters
   type: object
@@ -66,3 +56,4 @@ parameter_openapi_schema:
       type: string
   required: null
   definitions: null
+timestamp: '2023-11-25T06:47:33.600205+00:00'
