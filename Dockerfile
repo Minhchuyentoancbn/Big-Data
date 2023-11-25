@@ -6,3 +6,4 @@ RUN pip install -r docker-requirements.txt --trusted-host pypi.python.org --no-c
 
 COPY flows /opt/prefect/flows
 RUN mkdir -p /opt/prefect/data/yellow
+RUN mkdir -p /opt/prefect/data/green
