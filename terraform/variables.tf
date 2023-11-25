@@ -2,6 +2,11 @@ locals {
   data_lake_bucket = "dtc_data_lake"
 }
 
+variable "project_id" {
+  default     = "bigdata-405714"
+  description = "The project ID to host the cluster in"
+}
+
 variable "project" {
   description = "Your GCP Project ID"
 }
@@ -27,4 +32,40 @@ variable "credentials" {
   description = "Path to your GCP credentials file. If not set, then set env-var GOOGLE_APPLICATION_CREDENTIALS"
   type = string
   default = "g:/School/Bigdata/Project/data/bigdata-405714-4d85ab4eb36b.json"
+}
+
+variable "zone" {
+  description = "Zone for GCP resources. Choose as per your location: https://cloud.google.com/about/locations"
+  default = "asia-east2-a"
+  type = string
+}
+
+variable "cluster_name" {
+  description = "The name for the GKE cluster"
+  default     = "bigdata-cluster"
+}
+
+variable "env_name" {
+  description = "The environment for the GKE cluster"
+  default     = "prod"
+}
+
+variable "network" {
+  description = "The VPC network created to host the cluster in"
+  default     = "gke-network"
+}
+
+variable "subnetwork" {
+  description = "The subnetwork created to host the cluster in"
+  default     = "gke-subnet"
+}
+
+variable "ip_range_pods_name" {
+  description = "The secondary ip range to use for pods"
+  default     = "ip-range-pods"
+}
+
+variable "ip_range_services_name" {
+  description = "The secondary ip range to use for services"
+  default     = "ip-range-services"
 }
