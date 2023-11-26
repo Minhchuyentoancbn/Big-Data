@@ -17,7 +17,7 @@
 ## Pre-requisites
 
 We assume that you have the following installed on your machine:
-- Docker
+- Docker and Docker Compose
 - Python
 - Google Cloud SDK
 - Terraform
@@ -32,6 +32,7 @@ We assume that you have the following installed on your machine:
 - Google Cloud Platform
 - Terraform
 - Prefect
+- GCP Cloud Run
 
 
 ### 1.2. Dataset
@@ -60,7 +61,7 @@ __Setup for Access__
 - 1.[IAM Roles](https://cloud.google.com/storage/docs/access-control/iam-roles) for Service account:
    * Go to the *IAM* section of *IAM & Admin* https://console.cloud.google.com/iam-admin/iam
    * Click the *Edit principal* icon for your service account.
-   * Add these roles in addition to *Viewer* : **Storage Admin** + **Storage Object Admin** + **BigQuery Admin**
+   * Add these roles in addition to *Viewer* : **Storage Admin** + **Storage Object Admin** + **BigQuery Admin**  + **Service Account User**  + **Cloud Run Admin** + **Artifact Registry Administrator** + **Artifact Registry Repository Administrator**
    
 - 2.Enable these APIs for your project:
    * https://console.cloud.google.com/apis/library/iam.googleapis.com
@@ -208,7 +209,7 @@ prefect agent start --work-queue "default"
 ```
 
 
-### 2.5. Schedules & Docker Storage with Infrastructure
+### 2.4. Schedules & Docker Storage with Infrastructure
 
 Build Docker image:
 ```bash
@@ -224,7 +225,7 @@ Create a Docker Container Block in the Prefect UI. Remember to config the Volume
 
 Build and apply deployment with Docker Container:
 ```bash
-python flows/docker_deploy.py
+python flows/docker_etl_web_to_gcs.py
 ```
 
 Run the Prefect Agent:
@@ -233,7 +234,7 @@ Run the Prefect Agent:
 prefect agent start -q default
 
 # Run deployment
-prefect deployment run etl-parent-flow/docker-flow -p "months=[1, 2]"
+prefect deployment run etl-parent-web-to-gcs/docker-etl-web-to-gcs -p "months=[1, 2]"
 ```
 
 Run EL data from GCS to BQ and then go to the Prefect UI to run the deployment.
@@ -242,8 +243,34 @@ prefect deployment build flows/etl_gcs_to_bq.py:el_parent_gcs_to_bq -n etl_gcs_t
 ```
 
 
-__NOTE:__ You should config the Prefect API URL before running the flow. If you don't, please run the following command:
+__NOTE:__ 
+- You should config the Prefect API URL before running the flow. If you don't, please run the following command:
 ```bash
-# Configure Prefect to communicate with the server
+# Configure Prefect to communicate with local server
 prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api
+
+# Exmaple for debugging
+docker run -e PREFECT_API_URL=YOUR_PREFECT_API_URL -e PREFECT_API_KEY=YOUR_API_KEY prefect-docker-guide-image
+```
+
+### 2.5. Serverless Prefect Flows with Google Cloud Run Jobs
+
+Build and push Docker image to Google Artifact Registry:
+```bash
+# Build Docker image
+docker build -t asia-east2-docker.pkg.dev/bigdata-405714/bigdata-repo/prefect-agents-etl:latest .
+
+# Login Google Artifact Registry
+gcloud auth configure-docker asia-east2-docker.pkg.dev
+
+# Push Docker image to Google Artifact Registry
+docker push asia-east2-docker.pkg.dev/bigdata-405714/bigdata-repo/prefect-agents-etl:latest
+```
+
+Add GCP Cloud Run Block in the Prefect UI. Then build and apply deployment:
+```bash
+prefect deployment build -n "Cloud Run ETL Web to GCS" -ib "cloud-run-job/cloud-run" flows/etl_web_to_gcs.py:etl_parent_web_to_gcs -q default -p gcp-cloud-run-pool -a
+
+# Run deployment
+prefect deployment run "etl-parent-web-to-gcs/Cloud Run ETL Web to GCS" -p "months=[3, 4]" -p "year=2019"
 ```
