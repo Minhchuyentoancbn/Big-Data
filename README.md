@@ -300,3 +300,32 @@ prefect deployment run "el-parent-gcs-to-bq/Cloud Run ETL GCS to BQ" -p "months=
 
 - See the [ML](./big_query/big_query_ml.sql) file for the ML queries.
 
+- To deploy the ML model, run the following command:
+```bash
+# Log in
+gcloud auth login
+
+# Make directory
+mkdir tmp/model
+
+# Export the model to GCS
+bq --project_id bigdata-405714 extract -m trips_data_all.tip_model gs://bigdata_ml_model/tip_model
+
+# Copy the model to local machine
+gsutil cp -r gs://bigdata_ml_model/tip_model tmp/model/
+
+# Make a serving directory
+mkdir -p serving_dir/tip_model/1
+cp -r tmp/model/tip_model/* serving_dir/tip_model/1
+
+# Pull the docker image
+docker pull tensorflow/serving
+
+# Run the docker image
+docker run -p 8501:8501 --mount type=bind,source=g/School/Bigdata/Project/serving_dir/tip_model,target=/models/tip_model -e MODEL_NAME=tip_model -t tensorflow/serving
+
+# Send a request to the model
+curl -d '{"instances": [{"passenger_count":1, "trip_distance":12.2, "PULocationID":"193", "DOLocationID":"264", "payment_type":"2","fare_amount":20.4,"tolls_amount":0.0}]}' -X POST http://localhost:8501/v1/models/tip_model:predict
+```
+
+Access the model at `http://localhost:8501/v1/models/tip_model`. 
