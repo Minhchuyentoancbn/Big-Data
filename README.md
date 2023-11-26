@@ -11,7 +11,9 @@
    - [2.1. Prefect](#21-prefect)
    - [2.2. From Web to Google Cloud Storage (GCS)](#22-from-web-to-google-cloud-storage-gcs)
    - [2.3. From Google Cloud Storage to Big Query](#23-from-google-cloud-storage-to-big-query)
-   - [2.5. Schedules & Docker Storage with Infrastructure](#25-schedules--docker-storage-with-infrastructure)
+   - [2.4. Schedules & Docker Storage with Infrastructure](#24-schedules--docker-storage-with-infrastructure)
+   - [2.5. Serverless Prefect Flows with Google Cloud Run Jobs](#25-serverless-prefect-flows-with-google-cloud-run-jobs)
+- [3. Data Warehouse](#3-data-warehouse)
 
 
 ## Pre-requisites
@@ -29,10 +31,11 @@ We assume that you have the following installed on your machine:
 
 - Python
 - Docker
-- Google Cloud Platform
 - Terraform
 - Prefect
-- GCP Cloud Run
+- Google Cloud Storage
+- Google Cloud Run
+- Google Big Query
 
 
 ### 1.2. Dataset
@@ -242,7 +245,6 @@ Run EL data from GCS to BQ and then go to the Prefect UI to run the deployment.
 prefect deployment build flows/etl_gcs_to_bq.py:el_parent_gcs_to_bq -n etl_gcs_to_bq -a
 ```
 
-
 __NOTE:__ 
 - You should config the Prefect API URL before running the flow. If you don't, please run the following command:
 ```bash
@@ -252,6 +254,7 @@ prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api
 # Exmaple for debugging
 docker run -e PREFECT_API_URL=YOUR_PREFECT_API_URL -e PREFECT_API_KEY=YOUR_API_KEY prefect-docker-guide-image
 ```
+
 
 ### 2.5. Serverless Prefect Flows with Google Cloud Run Jobs
 
@@ -269,8 +272,31 @@ docker push asia-east2-docker.pkg.dev/bigdata-405714/bigdata-repo/prefect-agents
 
 Add GCP Cloud Run Block in the Prefect UI. Then build and apply deployment:
 ```bash
-prefect deployment build -n "Cloud Run ETL Web to GCS" -ib "cloud-run-job/cloud-run" flows/etl_web_to_gcs.py:etl_parent_web_to_gcs -q default -p gcp-cloud-run-pool -a
+# Build deployment
+prefect deployment build -n "Cloud Run ETL Web to GCS" -ib "cloud-run-job/cloud-run" flows/etl_web_to_gcs.py:etl_parent_web_to_gcs -q default -a
 
 # Run deployment
-prefect deployment run "etl-parent-web-to-gcs/Cloud Run ETL Web to GCS" -p "months=[3, 4]" -p "year=2019"
+prefect deployment run "etl-parent-web-to-gcs/Cloud Run ETL Web to GCS" -p "months=[1, 2]" -p "year=2019"
 ```
+
+For EL data from GCS to BQ, run the following command:
+```bash
+# Build deployment
+prefect deployment build -n "Cloud Run ETL GCS to BQ" -ib "cloud-run-job/cloud-run" flows/etl_gcs_to_bq.py:el_parent_gcs_to_bq -q default -a
+
+# Run deployment
+prefect deployment run "el-parent-gcs-to-bq/Cloud Run ETL GCS to BQ" -p "months=[3, 4]" -p "year=2019"
+```
+
+
+## 3. Data Warehouse
+
+### 3.1. Data Warehouse
+
+- See the [SQL](./big_querry/big_querry.sql) file for the SQL queries.
+
+
+### 3.2. ML in Big Querry
+
+- See the [ML](./big_querry/big_querry_ml.sql) file for the ML queries.
+
