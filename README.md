@@ -14,6 +14,8 @@
    - [2.4. Schedules & Docker Storage with Infrastructure](#24-schedules--docker-storage-with-infrastructure)
    - [2.5. Serverless Prefect Flows with Google Cloud Run Jobs](#25-serverless-prefect-flows-with-google-cloud-run-jobs)
 - [3. Data Warehouse](#3-data-warehouse)
+   - [3.1. Data Warehouse](#31-data-warehouse)
+   - [3.2. ML in Big Query](#32-ml-in-big-query)
 
 
 ## Pre-requisites
