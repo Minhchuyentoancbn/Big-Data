@@ -293,10 +293,10 @@ prefect deployment run "el-parent-gcs-to-bq/Cloud Run ETL GCS to BQ" -p "months=
 
 ### 3.1. Data Warehouse
 
-- See the [SQL](./big_querry/big_querry.sql) file for the SQL queries.
+- See the [SQL](./big_query/big_query.sql) file for the SQL queries.
 
 
-### 3.2. ML in Big Querry
+### 3.2. ML in Big Query
 
-- See the [ML](./big_querry/big_querry_ml.sql) file for the ML queries.
+- See the [ML](./big_query/big_query_ml.sql) file for the ML queries.
 
