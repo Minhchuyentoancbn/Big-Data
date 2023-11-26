@@ -18,3 +18,6 @@ NOTE.txt
 k8s.cfg
 
 *__pycache__/
+
+el_parent_gcs_to_bq-deployment.yaml
+etl_parent_web_to_gcs-deployment.yaml
