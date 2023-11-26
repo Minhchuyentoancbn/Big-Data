@@ -33,13 +33,13 @@ def read(path) -> pd.DataFrame:
 
 
 @task()
-def write_bq(df: pd.DataFrame):
+def write_bq(df: pd.DataFrame, name: str) -> int:
     """
     Writes the dataset to BigQuery
     """
     credentials = GcpCredentials.load("gcp-creds")
     df.to_gbq(
-        destination_table="trips_data_all.rides",
+        destination_table=f"trips_data_all.{name}",
         project_id="bigdata-405714",
         credentials=credentials.get_credentials_from_service_account(),
         chunksize=500_000,
@@ -49,14 +49,14 @@ def write_bq(df: pd.DataFrame):
 
 
 @flow()
-def etl_gcs_to_bq(month: int, year: int, color: str):
+def etl_gcs_to_bq(month: int, year: int, color: str, name: str) -> int:
     """
     The main ETL function to load data to BigQuery
     """
 
     path = extract_from_gcs(color, year, month)
     df = read(path)
-    row_count = write_bq(df)
+    row_count = write_bq(df, name=name)
     return row_count
 
 
@@ -64,14 +64,15 @@ def etl_gcs_to_bq(month: int, year: int, color: str):
 def el_parent_gcs_to_bq(
     months: list[int] = [1, 2,],
     year: int = 2021,
-    color: str = "yellow"
+    color: str = "yellow",
+    table_name: str = "rides"
 ):
     """
     Main EL Flow to load data into BigQuery
     """
     total_rows = 0
     for month in months:
-        rows = etl_gcs_to_bq(month, year, color)
+        rows = etl_gcs_to_bq(month, year, color, name=table_name)
         total_rows += rows
     
     print(f"Total rows: {total_rows}")
