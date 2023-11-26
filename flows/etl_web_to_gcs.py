@@ -32,7 +32,11 @@ def clean(df: pd.DataFrame, color: str) -> pd.DataFrame:
         df['lpep_pickup_datetime'] = pd.to_datetime(df['lpep_pickup_datetime'])
         df['lpep_dropoff_datetime'] = pd.to_datetime(df['lpep_dropoff_datetime'])
 
+    df['VendorID'] = df['VendorID'].astype('Int64')
     df['passenger_count'] = df['passenger_count'].astype('Int64')
+    df['RatecodeID'] = df['RatecodeID'].astype('Int64')
+    df['store_and_fwd_flag'] = df['store_and_fwd_flag'].map({'N': False, 'Y': True}).astype(bool)
+    df['payment_type'] = df['payment_type'].astype('Int64')
         
     print(df.head(2))
     print(f"colums: {df.dtypes}")
