@@ -33,7 +33,11 @@ def clean(df: pd.DataFrame, color: str) -> pd.DataFrame:
         df['lpep_dropoff_datetime'] = pd.to_datetime(df['lpep_dropoff_datetime'])
     elif color == "fhv":
         df['pickup_datetime'] = pd.to_datetime(df['pickup_datetime'])
-        df['dropoff_datetime'] = pd.to_datetime(df['dropoff_datetime'])
+        if 'dropoff_datetime' in df.columns:
+            df['dropoff_datetime'] = pd.to_datetime(df['dropoff_datetime'])
+        else:
+            df['dropOff_datetime'] = pd.to_datetime(df['dropOff_datetime'])
+
 
     if 'VendorID' in df.columns:
         df['VendorID'] = df['VendorID'].astype('Int64')
