@@ -3,6 +3,7 @@ ny_taxi_postgres_data/
 data/*.csv
 data/*.pdf
 data/yellow/*.parquet
+data/fhv
 data_pgadmin/
 data/*.json
 data/data/

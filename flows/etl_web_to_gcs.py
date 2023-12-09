@@ -31,12 +31,30 @@ def clean(df: pd.DataFrame, color: str) -> pd.DataFrame:
     elif color == "green":
         df['lpep_pickup_datetime'] = pd.to_datetime(df['lpep_pickup_datetime'])
         df['lpep_dropoff_datetime'] = pd.to_datetime(df['lpep_dropoff_datetime'])
+    elif color == "fhv":
+        df['pickup_datetime'] = pd.to_datetime(df['pickup_datetime'])
+        df['dropoff_datetime'] = pd.to_datetime(df['dropoff_datetime'])
 
-    df['VendorID'] = df['VendorID'].astype('Int64')
-    df['passenger_count'] = df['passenger_count'].astype('Int64')
-    df['RatecodeID'] = df['RatecodeID'].astype('Int64')
-    df['store_and_fwd_flag'] = df['store_and_fwd_flag'].map({'N': False, 'Y': True}).astype(bool)
-    df['payment_type'] = df['payment_type'].astype('Int64')
+    if 'VendorID' in df.columns:
+        df['VendorID'] = df['VendorID'].astype('Int64')
+    
+    if 'passenger_count' in df.columns:
+        df['passenger_count'] = df['passenger_count'].astype('Int64')
+
+    if 'RatecodeID' in df.columns:
+        df['RatecodeID'] = df['RatecodeID'].astype('Int64')
+
+    if 'store_and_fwd_flag' in df.columns:
+        df['store_and_fwd_flag'] = df['store_and_fwd_flag'].map({'N': False, 'Y': True}).astype(bool)
+
+    if 'payment_type' in df.columns:
+        df['payment_type'] = df['payment_type'].astype('Int64')
+
+    if 'PULocationID' in df.columns:
+        df['PULocationID'] = df['PULocationID'].astype('Int64')
+
+    if 'DOLocationID' in df.columns:
+        df['DOLocationID'] = df['DOLocationID'].astype('Int64')
         
     print(df.head(2))
     print(f"colums: {df.dtypes}")
