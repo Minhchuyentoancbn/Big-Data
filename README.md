@@ -16,6 +16,7 @@
 - [3. Data Warehouse](#3-data-warehouse)
    - [3.1. Data Warehouse](#31-data-warehouse)
    - [3.2. ML in Big Query](#32-ml-in-big-query)
+- [4. Analytics Engineering](#4-analytics-engineering)
 
 
 ## Pre-requisites
@@ -331,3 +332,25 @@ curl -d '{"instances": [{"passenger_count":1, "trip_distance":12.2, "PULocationI
 ```
 
 Access the model at `http://localhost:8501/v1/models/tip_model`. 
+
+
+## 4. Analytics Engineering
+
+- Create a dbt cloud account and connect to your BiqQuery datawarehouse.
+- Load data into BigQuery with `yellow_tripdata` and `green_tripdata` tables.
+- Create datasets `dbt_mle` and `production` in BigQuery.
+
+Go to dbt cloud. Run the following commands:
+```bash
+# Download all the dependencies
+dbt deps
+
+# Seed data into BigQuery
+dbt seed --full-refresh
+
+# Run the models
+dbt run --vars 'is_test_run: false'
+
+# Or run all with one command
+dbt build --vars 'is_test_run: false'
+```
