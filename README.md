@@ -354,3 +354,5 @@ dbt run --vars 'is_test_run: false'
 # Or run all with one command
 dbt build --vars 'is_test_run: false'
 ```
+
+- Go to [this link](https://lookerstudio.google.com/s/rW6QzYH8BKo) to see the dashboard.
