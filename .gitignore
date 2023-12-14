@@ -14,6 +14,7 @@ terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
 
 NOTE.txt
+notebooks/
 *.ipynb
 *.gz
 k8s.cfg

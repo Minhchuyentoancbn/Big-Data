@@ -1,7 +1,6 @@
 # Big Data Project - NYC Taxi Data Analysis
 
 ## Table of Contents
-- [Pre-requisites](#pre-requisites)
 - [1. Project Overview](#1-project-overview)
    - [1.1. Technologies Used](#11-technologies-used)
    - [1.2. Dataset](#12-dataset)
@@ -17,15 +16,7 @@
    - [3.1. Data Warehouse](#31-data-warehouse)
    - [3.2. ML in Big Query](#32-ml-in-big-query)
 - [4. Analytics Engineering](#4-analytics-engineering)
-
-
-## Pre-requisites
-
-We assume that you have the following installed on your machine:
-- Docker and Docker Compose
-- Python
-- Google Cloud SDK
-- Terraform
+- [5. Batch Processing](#5-batch-processing)
 
 
 ## 1. Project Overview
@@ -39,6 +30,9 @@ We assume that you have the following installed on your machine:
 - Google Cloud Storage
 - Google Cloud Run
 - Google Big Query
+- dbt
+- Looker
+- Spark
 
 
 ### 1.2. Dataset
@@ -356,3 +350,19 @@ dbt build --vars 'is_test_run: false'
 ```
 
 - Go to [this link](https://lookerstudio.google.com/s/rW6QzYH8BKo) to see the dashboard.
+
+
+## 5. Batch Processing
+
+- Go to `localhost:4040` to see the Spark UI.
+- To prepare the data, run the following command:
+```bash
+# Run the script
+./download_data.sh yellow 2020
+./download_data.sh green 2020
+./download_data.sh yellow 2021
+./download_data.sh green 2021
+
+# Prepare the data
+python spark/taxi_schema.py
+```
