@@ -80,3 +80,31 @@ if __name__ == "__main__":
         except:
             print(f'no data for {year}/{month}')
             break
+
+    year = 2020
+    for month in range(1, 13):
+        print(f'processing data for {year}/{month}')
+
+        input_path = f'data/raw/yellow/{year}/{month:02d}/'
+        output_path = f'data/pq/yellow/{year}/{month:02d}/'
+
+        try:
+            df_yellow = spark.read.option("header", "true").schema(yellow_schema).csv(input_path)
+            df_yellow.repartition(4).write.parquet(output_path)
+        except:
+            print(f'no data for {year}/{month}')
+            break
+
+    year = 2021
+    for month in range(1, 13):
+        print(f'processing data for {year}/{month}')
+
+        input_path = f'data/raw/yellow/{year}/{month:02d}/'
+        output_path = f'data/pq/yellow/{year}/{month:02d}/'
+
+        try:
+            df_yellow = spark.read.option("header", "true").schema(yellow_schema).csv(input_path)
+            df_yellow.repartition(4).write.parquet(output_path)
+        except:
+            print(f'no data for {year}/{month}')
+            break

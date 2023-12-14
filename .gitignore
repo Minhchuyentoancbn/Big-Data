@@ -7,6 +7,8 @@ data/fhv
 data_pgadmin/
 data/*.json
 data/data/
+data/raw/
+data/pq/
 
 terraform/.terraform/
 terraform/.terraform.lock.hcl
