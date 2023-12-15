@@ -9,6 +9,7 @@ data/*.json
 data/data/
 data/raw/
 data/pq/
+data/report/
 
 terraform/.terraform/
 terraform/.terraform.lock.hcl
