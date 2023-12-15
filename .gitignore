@@ -10,6 +10,9 @@ data/data/
 data/raw/
 data/pq/
 data/report/
+data/zones/
+
+lib/*.jar
 
 terraform/.terraform/
 terraform/.terraform.lock.hcl

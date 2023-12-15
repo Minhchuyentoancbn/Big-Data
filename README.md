@@ -366,3 +366,11 @@ dbt build --vars 'is_test_run: false'
 # Prepare the data
 python spark/taxi_schema.py
 ```
+
+- Upload the data to GCS:
+```bash
+# Upload the data to GCS
+gsutil -m cp -r data/pq/ gs://dtc_data_lake_bigdata-405714/pq
+```
+
+- Go to [this link](https://cloud.google.com/dataproc/docs/concepts/connectors/cloud-storage) to download the connector and put it in the `spark/jars` folder.
