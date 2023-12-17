@@ -367,10 +367,26 @@ dbt build --vars 'is_test_run: false'
 python spark/taxi_schema.py
 ```
 
+- Go to [this link](https://cloud.google.com/dataproc/docs/concepts/connectors/cloud-storage) to download the connector and put it in the `spark/jars` folder.
+
 - Upload the data to GCS:
 ```bash
 # Upload the data to GCS
 gsutil -m cp -r data/pq/ gs://dtc_data_lake_bigdata-405714/pq
 ```
 
-- Go to [this link](https://cloud.google.com/dataproc/docs/concepts/connectors/cloud-storage) to download the connector and put it in the `spark/jars` folder.
+- Create a Dataproc cluster in GCP and a bucket `code` in GCS.
+- Upload the code to GCS:
+```bash
+# Upload the code to GCS
+gsutil cp spark/spark_sql.py gs://bigdata-code/spark_sql.py
+gsutil cp spark/spark_sql_big_query.py gs://bigdata-code/spark_sql_big_query.py
+
+# Submit the job to write data to GCS
+gcloud dataproc jobs submit pyspark --cluster=bigdata-cluster --region=asia-east2 gs://bigdata-code/spark_sql.py -- -- --input_green=gs://dtc_data_lake_bigdata-405714/pq/green/2020/*/ --input_yellow=gs://dtc_data_lake_bigdata-405714/pq/yellow/2020/*/ --output=gs://dtc_data_lake_bigdata-405714/report-2020
+
+gcloud dataproc jobs submit pyspark --cluster=bigdata-cluster --region=asia-east2 gs://bigdata-code/spark_sql.py -- -- --input_green=gs://dtc_data_lake_bigdata-405714/pq/green/2021/*/ --input_yellow=gs://dtc_data_lake_bigdata-405714/pq/yellow/2021/*/ --output=gs://dtc_data_lake_bigdata-405714/report-2021
+
+# Submit the job to write data to BigQuery
+gcloud dataproc jobs submit pyspark  --cluster=bigdata-cluster --region=asia-east2 --jars=gs://spark-lib/bigquery/spark-bigquery-latest_2.12.jar gs://bigdata-code/spark_sql_big_query.py -- -- --input_green=gs://dtc_data_lake_bigdata-405714/pq/green/2020/*/ --input_yellow=gs://dtc_data_lake_bigdata-405714/pq/yellow/2020/*/ --output=trips_data_all.reports-2020
+```
