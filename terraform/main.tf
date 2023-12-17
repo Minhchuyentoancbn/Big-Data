@@ -57,3 +57,23 @@ resource "google_artifact_registry_repository" "bigdata-repo" {
   description   = "Prefect agents"
   format        = "DOCKER"
 }
+
+resource "google_dataproc_cluster" "dataproc-cluster" {
+  name     = "bigdata-cluster"
+  project    = var.project
+  region   = var.region
+
+  cluster_config {
+    master_config {
+      num_instances = 1
+      machine_type  = "n2-standard-2"
+    }
+
+    # Override or set some custom properties
+    software_config {
+      override_properties = {
+        "dataproc:dataproc.allow.zero.workers" = "true"
+      }
+    }
+  }
+}
