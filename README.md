@@ -6,6 +6,7 @@
 - [1. Giới thiệu về project](#1-giới-thiệu-về-project)
    - [1.1. Tổng quan](#11-tổng-quan)
    - [1.2. Dataset](#12-dataset)
+   - [1.3. Công nghệ sử dụng và kiến trúc hệ thống](#13-công-nghệ-sử-dụng-và-kiến-trúc-hệ-thống)
 
 ## 1. Giới thiệu về project
 
@@ -41,3 +42,18 @@
 | Total_amount | The total amount charged to passengers. Does not include cash tips. |
 | Congestion_Surcharge | Total amount collected in trip for NYS congestion surcharge. |
 | Airport_fee | $1.25 for pick up only at LaGuardia and John F. Kennedy Airports |
+
+
+### 1.3. Công nghệ sử dụng và kiến trúc hệ thống
+
+- Docker: Đóng gói code và các thư viện cần thiết để chạy pipeline.
+- Prefect: Lập lịch và quản lý luồng.
+- Google Cloud Platform (GCP):
+   - Google Cloud Storage (GCS): data lake chứa dữ liệu thô.
+   - Google BigQuery: data warehouse chứa dữ liệu đã được làm sạch và biến đổi.
+   - Looker Studio: trực quan hóa dữ liệu.
+- dbt: làm sạch, biến đổi và chuẩn bị dữ liệu cho mục đích phân tích.
+- Spark: tương tự như dbt
+- Terraform: triển khai hệ thống lên GCP.
+
+![](docs/architecture.png)
