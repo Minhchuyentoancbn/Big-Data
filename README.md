@@ -2,19 +2,12 @@
 
 ![](docs/yellow-cab.png)
 
-## Table of Contents
-- [1. Giới thiệu về project](#1-giới-thiệu-về-project)
-   - [1.1. Tổng quan](#11-tổng-quan)
-   - [1.2. Dataset](#12-dataset)
-   - [1.3. Công nghệ sử dụng và kiến trúc hệ thống](#13-công-nghệ-sử-dụng-và-kiến-trúc-hệ-thống)
 
 ## 1. Giới thiệu về project
 
-### 1.1. Tổng quan
-
 - Mục tiêu của project này là xây dựng 1 data pipeline tự động thu thập, biến đổi và biểu diễn dữ liệu về taxi của thành phố New York nhằm phục vụ cho các bài toán phân tích sau này. Prefect được sử dụng để xây dựng pipeline download data từ web về và upload lên Google Cloud Storage (GCS) và Google BigQuery. Trong BigQuery, dữ liệu được làm sạch, biến đổi và kiểm tra sử dụng dbt và Spark nhằm tạo ra bộ dữ liệu cuối cùng cho mục đích trực quan hóa. Dashboard được cung cấp tới người dùng sử dụng Looker Studio
 
-### 1.2. Dataset
+## 2. Dataset
 
 - Dữ liệu được thu thập từ [website-quản-lý-của-thành-phố](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page 
 ). Ở trong project này, dữ liệu được phân tích là dữ liệu từ 01/2019 - 07/2021 của các loại taxi: yellow taxi, green taxi, for-hire vehicles (FHV), for-hire vehicles high volume (FHVHV). 
@@ -44,7 +37,7 @@
 | Airport_fee | $1.25 for pick up only at LaGuardia and John F. Kennedy Airports |
 
 
-### 1.3. Công nghệ sử dụng và kiến trúc hệ thống
+## 3. Công nghệ sử dụng và kiến trúc hệ thống
 
 - Docker: Đóng gói code và các thư viện cần thiết để chạy pipeline.
 - Prefect: Lập lịch và quản lý luồng.
