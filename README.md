@@ -15,8 +15,9 @@
 
 ### 1.2. Dataset
 
-- Dữ liệu được thu thập từ [website quản lý của thành phố](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page 
-). Ở trong project này, dữ liệu được phân tích là dữ liệu từ 01/2019 - 07/2021 của các loại taxi: yellow taxi, green taxi, for-hire vehicles (FHV), for-hire vehicles high volume (FHVHV). Kích thước dữ liệu là hơn 30GB với hơn 100 triệu bản ghi.
+- Dữ liệu được thu thập từ [website-quản-lý-của-thành-phố](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page 
+). Ở trong project này, dữ liệu được phân tích là dữ liệu từ 01/2019 - 07/2021 của các loại taxi: yellow taxi, green taxi, for-hire vehicles (FHV), for-hire vehicles high volume (FHVHV). 
+- Kích thước dữ liệu: hơn 30GB với hơn 100 triệu bản ghi.
 - Dưới đây là một số trường trong bộ dữ liệu
 
 | Field | Description |
