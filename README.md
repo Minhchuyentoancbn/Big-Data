@@ -1,5 +1,7 @@
 # Big Data Project - NYC Taxi Data Analysis
 
+![](docs/yellow-cab.png)
+
 ## Table of Contents
 - [1. Project Overview](#1-project-overview)
    - [1.1. Technologies Used](#11-technologies-used)
