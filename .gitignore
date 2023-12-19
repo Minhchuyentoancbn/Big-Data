@@ -11,6 +11,7 @@ data/raw/
 data/pq/
 data/report/
 data/zones/
+data/*.txt
 
 lib/*.jar
 
