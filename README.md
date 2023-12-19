@@ -5,7 +5,9 @@
 
 ## 1. Giới thiệu về project
 
-- Mục tiêu của project này là xây dựng 1 data pipeline tự động thu thập, biến đổi và biểu diễn dữ liệu về taxi của thành phố New York nhằm phục vụ cho các bài toán phân tích sau này. Prefect được sử dụng để xây dựng pipeline download data từ web về và upload lên Google Cloud Storage (GCS) và Google BigQuery. Trong BigQuery, dữ liệu được làm sạch, biến đổi và kiểm tra sử dụng dbt và Spark nhằm tạo ra bộ dữ liệu cuối cùng cho mục đích trực quan hóa. Dashboard được cung cấp tới người dùng sử dụng Looker Studio
+-	Là một trong những thành phố nhộn nhịp nhất và nằm ở trái tim của nước Mỹ, thành phố New York hàng tháng chứng kiến hàng triệu chuyến đi taxi, tạo ra một lượng dữ liệu khổng lồ lên đến 143.6 terabytes với hơn 1.36 tỉ bản ghi. Đây không chỉ đơn giản là dữ liệu thô mà là một mỏ vàng ẩn chứa nhiều câu chuyện chờ được khám phá.
+-	Mục tiêu của project này là xây dựng 1 data pipeline tự động thu thập, biến đổi và biểu diễn lượng dữ liệu trên nhằm phục vụ cho các bài toán phân tích sau này. Prefect được sử dụng để xây dựng pipeline download data từ web về và upload lên Google Cloud Storage (GCS) và Google BigQuery. Trong BigQuery, dữ liệu được làm sạch, biến đổi và kiểm tra sử dụng dbt và Spark nhằm tạo ra bộ dữ liệu cuối cùng cho mục đích trực quan hóa. Dashboard được cung cấp tới người dùng sử dụng Looker Studio.
+
 
 ## 2. Dataset
 
@@ -45,8 +47,37 @@
    - Google Cloud Storage (GCS): data lake chứa dữ liệu thô.
    - Google BigQuery: data warehouse chứa dữ liệu đã được làm sạch và biến đổi.
    - Looker Studio: trực quan hóa dữ liệu.
+   - Cloud Run: chạy pipeline tự động.
 - dbt: làm sạch, biến đổi và chuẩn bị dữ liệu cho mục đích phân tích.
 - Spark: tương tự như dbt
 - Terraform: triển khai hệ thống lên GCP.
 
 ![](docs/architecture.png)
+
+
+## 4. Chi tiết hệ thống
+
+### 4.1. Terraform
+
+-	Terraform là một công cụ mã nguồn mở cho phép bạn định nghĩa Infrastructure as Code - IaC với đa dạng cloud provider như: Alibaba Cloud, AWS, Azure… Terraform cho phép quản lý hệ thống bằng code và tự động hóa việc triển khai hạ tầng. 
+-	Terraform được chọn vì nó có thể giúp quản lý cơ sở hạ tầng đám mây dễ dàng và hiệu quả hơn bằng cách viết mã để tự động hóa các quy trình triển khai và cập nhật. Trong project này nhóm sử dụng terraform để khởi tạo và quản lý một số tài nguyên trên GCP như:
+      - Google Storage Bucket: xây dựng data lake
+      - Google BigQuery Dataset: xây dựng data warehouse
+      - Google Artifact Registry Repository: chứa Docker image cho project
+      - Google DataProc Cluster: xây dựng spark cluster
+
+
+- Để khởi tạo hạ tầng hệ thống, đến thư mục `terraform` và chạy các lệnh sau:
+```bash
+# Initialize state file (.tfstate)
+terraform init
+
+# Or just
+terraform plan
+
+# Apply changes to new infra
+terraform apply
+
+# Delete infra after your work, to avoid costs on any running services
+terraform destroy
+```
