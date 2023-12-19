@@ -64,16 +64,39 @@ resource "google_dataproc_cluster" "dataproc-cluster" {
   region   = var.region
 
   cluster_config {
+    gce_cluster_config {
+      network = var.network
+      zone    = var.zone
+
+      shielded_instance_config {
+        enable_secure_boot = true
+      }
+    }
+
     master_config {
       num_instances = 1
       machine_type  = "n2-standard-2"
+      disk_config {
+        boot_disk_type    = "pd-ssd"
+        boot_disk_size_gb = 30
+      }
+    }
+
+    worker_config {
+      num_instances = 2
+      machine_type  = "n2-standard-2"
+      disk_config {
+        boot_disk_size_gb = 30
+      }
     }
 
     # Override or set some custom properties
     software_config {
+      image_version = "2.0-debian10"
       override_properties = {
         "dataproc:dataproc.allow.zero.workers" = "true"
       }
+      optional_components = ["JUPYTER"]
     }
   }
 }
