@@ -50,6 +50,19 @@ resource "google_bigquery_dataset" "dataset" {
   location   = var.region
 }
 
+resource "google_bigquery_dataset" "dbt_dataset" {
+  dataset_id = "dbt_mle"
+  project    = var.project
+  location   = var.region
+}
+
+resource "google_bigquery_dataset" "production_dataset" {
+  dataset_id = "production"
+  project    = var.project
+  location   = var.region
+}
+
+
 
 resource "google_artifact_registry_repository" "bigdata-repo" {
   location      = var.region
