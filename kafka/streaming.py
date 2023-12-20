@@ -89,6 +89,7 @@ def op_windowed_groupby(df, window_duration, slide_duration):
 
 if __name__ == "__main__":
     spark = SparkSession.builder.appName('streaming-examples').getOrCreate()
+    spark.conf.set('temporaryGcsBucket', 'dataproc-temp-asia-east2-285145462114-ku4fpzno')
     spark.sparkContext.setLogLevel('WARN')
 
     # read_streaming data
