@@ -55,29 +55,6 @@
 ![](docs/architecture.png)
 
 
-## 4. Chi tiết hệ thống
+## 4. Các bước thực hiện
 
-### 4.1. Terraform
-
--	Terraform là một công cụ mã nguồn mở cho phép bạn định nghĩa Infrastructure as Code - IaC với đa dạng cloud provider như: Alibaba Cloud, AWS, Azure… Terraform cho phép quản lý hệ thống bằng code và tự động hóa việc triển khai hạ tầng. 
--	Terraform được chọn vì nó có thể giúp quản lý cơ sở hạ tầng đám mây dễ dàng và hiệu quả hơn bằng cách viết mã để tự động hóa các quy trình triển khai và cập nhật. Trong project này nhóm sử dụng terraform để khởi tạo và quản lý một số tài nguyên trên GCP như:
-      - Google Storage Bucket: xây dựng data lake
-      - Google BigQuery Dataset: xây dựng data warehouse
-      - Google Artifact Registry Repository: chứa Docker image cho project
-      - Google DataProc Cluster: xây dựng spark cluster
-
-
-- Để khởi tạo hạ tầng hệ thống, đến thư mục `terraform` và chạy các lệnh sau:
-```bash
-# Initialize state file (.tfstate)
-terraform init
-
-# Or just
-terraform plan
-
-# Apply changes to new infra
-terraform apply
-
-# Delete infra after your work, to avoid costs on any running services
-terraform destroy
-```
+ - Xem chi tiết các bước thực hiện trong [docs](./reproduce.md)
