@@ -55,3 +55,9 @@ variable "network" {
   default     = "default"
   type        = string
 }
+
+variable "vm_image" {
+  description = "Image for you VM"
+  default     = "ubuntu-os-cloud/ubuntu-2004-lts"
+  type        = string
+}

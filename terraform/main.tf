@@ -63,13 +63,52 @@ resource "google_bigquery_dataset" "production_dataset" {
 }
 
 
-
 resource "google_artifact_registry_repository" "bigdata-repo" {
   location      = var.region
   repository_id = "bigdata-repo"
   description   = "Prefect agents"
   format        = "DOCKER"
 }
+
+
+resource "google_compute_firewall" "port_rules" {
+  project     = var.project
+  name        = "kafka-broker-port"
+  network     = var.network
+  description = "Opens port 9092 in the Kafka VM for Spark cluster to connect"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["9092", "9093"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["kafka"]
+
+}
+
+
+resource "google_compute_instance" "kafka_vm_instance" {
+  name                      = "streamify-kafka-instance"
+  machine_type              = "e2-standard-4"
+  zone                      = var.zone
+  tags                      = ["kafka"]
+  allow_stopping_for_update = true
+
+  boot_disk {
+    initialize_params {
+      image = var.vm_image
+      size  = 30
+    }
+  }
+
+  network_interface {
+    network = var.network
+    access_config {
+    }
+  }
+}
+
 
 resource "google_dataproc_cluster" "dataproc-cluster" {
   name     = "bigdata-cluster"
