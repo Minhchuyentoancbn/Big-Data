@@ -89,7 +89,7 @@ resource "google_compute_firewall" "port_rules" {
 
 
 resource "google_compute_instance" "kafka_vm_instance" {
-  name                      = "streamify-kafka-instance"
+  name                      = "kafka-instance"
   machine_type              = "e2-standard-4"
   zone                      = var.zone
   tags                      = ["kafka"]
