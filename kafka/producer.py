@@ -31,8 +31,8 @@ class RideCSVProducer:
                 records.append(f'{row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]}, {row[9]}, {row[16]}')
                 ride_keys.append(str(row[0]))
                 i += 1
-                if i == 5:
-                    break
+                # if i == 5:
+                #     break
         return zip(ride_keys, records)
 
     def publish(self, topic: str, records: [str, str]):
