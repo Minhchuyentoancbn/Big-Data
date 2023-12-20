@@ -13,8 +13,8 @@ def fetch(dataset_url: str) -> pd.DataFrame:
     """
     Fetches the dataset from the web
     """
-    # if randint(0, 1) > 0:  # Make it fail randomly
-    #     raise Exception("Random error")
+    if randint(0, 1) > 0:  # Make it fail randomly
+        raise Exception("Random error")
     
     df = pd.read_csv(dataset_url)
     return df
