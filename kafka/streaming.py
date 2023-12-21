@@ -31,7 +31,7 @@ def read_from_kafka(consume_topic: str):
     df_stream = spark \
         .readStream \
         .format("kafka") \
-        .option("kafka.bootstrap.servers", f"broker:29092") \
+        .option("kafka.bootstrap.servers", f"{KAFKA_ADDRESS}:9092,broker:29092") \
         .option("subscribe", consume_topic) \
         .option("startingOffsets", "earliest") \
         .option("checkpointLocation", "checkpoint") \
@@ -110,8 +110,8 @@ def op_windowed_groupby(df, window_duration, slide_duration):
 
 
 if __name__ == "__main__":
-    # os.environ['KAFKA_ADDRESS'] = '127.0.0.1'
-    # os.environ['GCP_GCS_BUCKET'] = 'dtc_data_lake_bigdata-405714'
+    os.environ['KAFKA_ADDRESS'] = '127.0.0.1'
+    os.environ['GCP_GCS_BUCKET'] = 'dtc_data_lake_bigdata-405714'
     # os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.1,org.apache.spark:spark-avro_2.12:3.3.1 pyspark-shell'
 
     spark = SparkSession.builder.appName('streaming-examples').getOrCreate()
