@@ -31,7 +31,7 @@ def read_from_kafka(consume_topic: str):
     df_stream = spark \
         .readStream \
         .format("kafka") \
-        .option("kafka.bootstrap.servers", f"{KAFKA_ADDRESS}:9092,broker:29092") \
+        .option("kafka.bootstrap.servers", f"broker:29092") \
         .option("subscribe", consume_topic) \
         .option("startingOffsets", "earliest") \
         .option("checkpointLocation", "checkpoint") \
