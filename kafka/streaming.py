@@ -1,7 +1,25 @@
 from pyspark.sql import SparkSession
 import pyspark.sql.functions as F
 
-from settings import RIDE_SCHEMA, CONSUME_TOPIC_RIDES_CSV, TOPIC_WINDOWED_VENDOR_ID_COUNT
+import pyspark.sql.types as T
+import os
+
+INPUT_DATA_PATH = './resources/rides.csv'
+BOOTSTRAP_SERVERS = '127.0.0.1:9092'
+
+TOPIC_WINDOWED_VENDOR_ID_COUNT = 'vendor_counts_windowed'
+
+PRODUCE_TOPIC_RIDES_CSV = CONSUME_TOPIC_RIDES_CSV = 'rides_csv'
+
+RIDE_SCHEMA = T.StructType(
+    [T.StructField("vendor_id", T.IntegerType()),
+     T.StructField('tpep_pickup_datetime', T.TimestampType()),
+     T.StructField('tpep_dropoff_datetime', T.TimestampType()),
+     T.StructField("passenger_count", T.IntegerType()),
+     T.StructField("trip_distance", T.FloatType()),
+     T.StructField("payment_type", T.IntegerType()),
+     T.StructField("total_amount", T.FloatType()),
+     ])
 
 
 def read_from_kafka(consume_topic: str):
@@ -88,6 +106,10 @@ def op_windowed_groupby(df, window_duration, slide_duration):
 
 
 if __name__ == "__main__":
+    os.environ['KAFKA_ADDRESS'] = '127.0.0.1'
+    os.environ['GCP_GCS_BUCKET'] = 'dtc_data_lake_bigdata-405714'
+    # os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.1,org.apache.spark:spark-avro_2.12:3.3.1 pyspark-shell'
+
     spark = SparkSession.builder.appName('streaming-examples').getOrCreate()
     # spark.conf.set('temporaryGcsBucket', 'dataproc-temp-asia-east2-285145462114-ku4fpzno')
     spark.sparkContext.setLogLevel('WARN')
