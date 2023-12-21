@@ -5,13 +5,13 @@ import pyspark.sql.types as T
 import os
 
 INPUT_DATA_PATH = './resources/rides.csv'
-BOOTSTRAP_SERVERS = '127.0.0.1:9092'
+BOOTSTRAP_SERVERS = '35.220.200.137:9092'
 
 TOPIC_WINDOWED_VENDOR_ID_COUNT = 'vendor_counts_windowed'
 
 PRODUCE_TOPIC_RIDES_CSV = CONSUME_TOPIC_RIDES_CSV = 'rides_csv'
 
-KAFKA_ADDRESS= "127.0.0.1"
+KAFKA_ADDRESS= "35.220.200.137"
 GCP_GCS_BUCKET = "dtc_data_lake_bigdata-405714"
 GCS_STORAGE_PATH = 'gs://' + GCP_GCS_BUCKET + '/realtime'
 
@@ -78,7 +78,7 @@ def sink_memory(df, query_name, query_template):
 def sink_kafka(df, topic):
     write_query = df.writeStream \
         .format("kafka") \
-        .option("kafka.bootstrap.servers", "127.0.0.1:9092,broker:29092") \
+        .option("kafka.bootstrap.servers", "35.220.200.137:9092,broker:29092") \
         .outputMode('complete') \
         .option("topic", topic) \
         .option("checkpointLocation", "checkpoint") \
@@ -110,7 +110,7 @@ def op_windowed_groupby(df, window_duration, slide_duration):
 
 
 if __name__ == "__main__":
-    os.environ['KAFKA_ADDRESS'] = '127.0.0.1'
+    os.environ['KAFKA_ADDRESS'] = '35.220.200.137'
     os.environ['GCP_GCS_BUCKET'] = 'dtc_data_lake_bigdata-405714'
     # os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.1,org.apache.spark:spark-avro_2.12:3.3.1 pyspark-shell'
 
