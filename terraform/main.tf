@@ -50,12 +50,6 @@ resource "google_bigquery_dataset" "dataset" {
   location   = var.region
 }
 
-resource "google_bigquery_dataset" "dbt_dataset" {
-  dataset_id = "dbt_mle"
-  project    = var.project
-  location   = var.region
-}
-
 resource "google_bigquery_dataset" "production_dataset" {
   dataset_id = "production"
   project    = var.project
@@ -130,7 +124,7 @@ resource "google_dataproc_cluster" "dataproc-cluster" {
       machine_type  = "n2-standard-2"
       disk_config {
         boot_disk_type    = "pd-ssd"
-        boot_disk_size_gb = 30
+        boot_disk_size_gb = 40
       }
     }
 
@@ -138,7 +132,7 @@ resource "google_dataproc_cluster" "dataproc-cluster" {
       num_instances = 2
       machine_type  = "n2-standard-2"
       disk_config {
-        boot_disk_size_gb = 30
+        boot_disk_size_gb = 40
       }
     }
 
