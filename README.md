@@ -58,3 +58,9 @@
 ## 4. Các bước thực hiện
 
  - Xem chi tiết các bước thực hiện trong [docs](./reproduce.md)
+
+## 5. Kết quả
+
+- [Link to dashboard](https://lookerstudio.google.com/reporting/7f728ad5-637e-4796-b240-aa1b7c6b77ce)
+
+![](docs/overview.png)
