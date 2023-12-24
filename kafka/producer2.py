@@ -38,7 +38,7 @@ class RideCSVProducer:
                 # vendor_id, passenger_count, trip_distance, payment_type, total_amount
                 records_csv.append(f'{row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]}, {row[5]}, {row[6]}, {row[7]}, {row[8]}, {row[9]}, {row[10]}, {row[11]}, {row[12]}, {row[13]}, {row[14]}, {row[15]}, {row[16]}, {row[17]}')
                 records.append(Ride(arr=row))
-                ride_keys.append(str(row[1]) + '-' + str(row[7]))
+                ride_keys.append(row[7])
 
                 i += 1
                 if i == 1000:
