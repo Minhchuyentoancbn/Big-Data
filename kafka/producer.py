@@ -33,7 +33,7 @@ class RideCSVProducer:
                 records.append(f'{row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]}, {row[5]}, {row[6]}, {row[7]}, {row[8]}, {row[9]}, {row[10]}, {row[11]}, {row[12]}, {row[13]}, {row[14]}, {row[15]}, {row[16]}, {row[17]}')
                 ride_keys.append(str(row[1]) + '-' + str(row[7]))
                 i += 1
-                if i == 10:
+                if i == 1000:
                     break
         return zip(ride_keys, records)
 
