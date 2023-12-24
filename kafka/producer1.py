@@ -39,7 +39,7 @@ class RideCSVProducer:
                 ride_keys.append(row[7])
 
                 i += 1
-                if i == 1000:
+                if i == 10000:
                     break
         return zip(ride_keys, records)
 
