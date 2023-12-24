@@ -4,6 +4,8 @@ import argparse
 from time import sleep
 from typing import Dict
 from kafka import KafkaProducer
+from kafka import KafkaAdminClient
+from kafka.admin.new_partitions import NewPartitions
 
 PRODUCE_TOPIC_RIDES_CSV = 'rides'
 
@@ -56,13 +58,20 @@ class RideCSVProducer:
             sleep(sleep_time)
 
         self.producer.flush()
-        self.producer_csv.flush()
+
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--time', type=float, default=0.5, help='time interval between each message')
     args = parser.parse_args(sys.argv[1:])
+
+    client = KafkaAdminClient(bootstrap_servers='localhost:9092')
+
+    rsp = client.create_partitions({
+        PRODUCE_TOPIC_RIDES_CSV: NewPartitions(4)
+    })
+    print(rsp)
 
     config = {
         'bootstrap_servers': BOOTSTRAP_SERVERS,

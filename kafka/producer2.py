@@ -56,7 +56,6 @@ class RideCSVProducer:
             sleep(sleep_time)
 
         self.producer.flush()
-        self.producer_csv.flush()
 
 
 if __name__ == "__main__":
