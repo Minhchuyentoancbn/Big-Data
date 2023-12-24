@@ -93,7 +93,7 @@ def sink_kafka(df, topic):
         .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP_SERVERS) \
         .outputMode('complete') \
         .option("topic", topic) \
-        .option("checkpointLocation", "checkpoint") \
+        .option("checkpointLocation", "/checkpoint") \
         .start()
     return write_query
 
