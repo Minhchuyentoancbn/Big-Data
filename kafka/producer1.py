@@ -1,6 +1,7 @@
 import csv
 import sys
 import argparse
+import time
 from time import sleep
 from typing import Dict
 from kafka import KafkaProducer
@@ -84,4 +85,7 @@ if __name__ == "__main__":
     ride_records = producer.read_records(resource_path=INPUT_DATA_PATH)
     # print(ride_records)
     print(f"Producing records to topic: {PRODUCE_TOPIC_RIDES_CSV}")
+    start_time = time.time()
     producer.publish(records=ride_records, sleep_time=args.time)
+    end_time = time.time()
+    print(f"Producing records took: {end_time - start_time} seconds")
