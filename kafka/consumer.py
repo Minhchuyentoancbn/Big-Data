@@ -10,8 +10,8 @@ KAFKA_ADDRESS= "35.220.200.137"
 KAFKA_BOOTSTRAP_SERVERS = f'{KAFKA_ADDRESS}:9092'
 
 GCP_GCS_BUCKET = "dtc_data_lake_bigdata-405714"
-GCS_STORAGE_PATH = 'gs://' + GCP_GCS_BUCKET + '/realtime'
-CHECKPOINT_PATH = 'gs://' + GCP_GCS_BUCKET + '/realtime/checkpoint/'
+GCS_STORAGE_PATH = 'gs://' + GCP_GCS_BUCKET + '/realtime2'
+CHECKPOINT_PATH = 'gs://' + GCP_GCS_BUCKET + '/realtime2/checkpoint/'
 
 RIDE_SCHEMA = T.StructType(
     [
@@ -96,9 +96,6 @@ if __name__ == "__main__":
     print(df_rides.printSchema())
 
     # Write to GCS
-    GCP_GCS_BUCKET = "dtc_data_lake_bigdata-405714"
-    GCS_STORAGE_PATH = 'gs://' + GCP_GCS_BUCKET + '/realtime'
-
-    write_stream = create_file_write_stream(df_rides, GCS_STORAGE_PATH)
+    write_stream = create_file_write_stream(df_rides, GCS_STORAGE_PATH, checkpoint_path=CHECKPOINT_PATH)
     write_query = write_stream.start()
     spark.streams.awaitAnyTermination()
