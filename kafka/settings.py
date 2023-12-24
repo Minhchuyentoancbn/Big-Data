@@ -1,7 +1,7 @@
 import pyspark.sql.types as T
 
 INPUT_DATA_PATH = './resources/rides_big.csv'
-BOOTSTRAP_SERVERS = ['35.220.200.137:9092', ]
+BOOTSTRAP_SERVERS = ['35.220.200.137:9092', '35.220.200.137:9093',]
 
 TOPIC_WINDOWED_VENDOR_ID_COUNT = 'vendor_counts_windowed'
 
