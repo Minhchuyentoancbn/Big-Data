@@ -44,7 +44,7 @@ def read_from_kafka(consume_topic: str):
         .format("kafka") \
         .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP_SERVERS) \
         .option("subscribe", consume_topic) \
-        .option("startingOffsets", "earliest") \
+        .option("startingOffsets", "latest") \
         .option("checkpointLocation", "checkpoint") \
         .load()
     return df_stream
