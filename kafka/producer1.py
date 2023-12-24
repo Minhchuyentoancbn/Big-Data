@@ -82,7 +82,7 @@ if __name__ == "__main__":
         'bootstrap_servers': BOOTSTRAP_SERVERS,
         'key_serializer': lambda x: str(x).encode('utf-8'),
         'value_serializer': lambda x: x.encode('utf-8'),
-        'acks': 'all',
+        # 'acks': 'all',
     }
 
     producer = RideCSVProducer(props=config)
