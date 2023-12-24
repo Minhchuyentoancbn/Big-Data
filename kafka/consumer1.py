@@ -3,7 +3,7 @@ import argparse
 from json import loads
 from typing import Dict, List
 from kafka import KafkaConsumer
-from .ride import Ride
+from ride import Ride
 
 CONSUME_TOPIC = 'rides_json'
 
