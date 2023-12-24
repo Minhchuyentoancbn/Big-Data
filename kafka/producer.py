@@ -27,10 +27,14 @@ class RideCSVProducer:
         with open(resource_path, 'r') as f:
             reader = csv.reader(f)
             header = next(reader)  # skip the header
+            i = 0
             for row in reader:
                 # vendor_id, passenger_count, trip_distance, payment_type, total_amount
                 records.append(f'{row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]}, {row[5]}, {row[6]}, {row[7]}, {row[8]}, {row[9]}, {row[10]}, {row[11]}, {row[12]}, {row[13]}, {row[14]}, {row[15]}, {row[16]}, {row[17]}')
                 ride_keys.append(str(row[1]) + '-' + str(row[7]))
+                i += 1
+                if i == 10:
+                    break
         return zip(ride_keys, records)
 
     def publish(self, topic: str, records: [str, str], sleep_time: float = 0.5):
