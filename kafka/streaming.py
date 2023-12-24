@@ -5,7 +5,7 @@ import pyspark.sql.types as T
 import os
 
 KAFKA_ADDRESS= "35.220.200.137"
-TOPIC_WINDOWED_VENDOR_ID_COUNT = 'vendor_counts_windowed_2'
+TOPIC_WINDOWED_VENDOR_ID_COUNT = 'vendor_counts_windowed'
 PRODUCE_TOPIC_RIDES_CSV = CONSUME_TOPIC_RIDES_CSV = 'rides_csv_4'
 
 GCP_GCS_BUCKET = "dtc_data_lake_bigdata-405714"
