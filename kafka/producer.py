@@ -51,7 +51,8 @@ class RideCSVProducer:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--time', type=float, default=5, help='time interval between each message')
+    parser.add_argument('--time', type=float, default=0.5, help='time interval between each message')
+    args = parser.parse_args(sys.argv[1:])
 
     config = {
         'bootstrap_servers': BOOTSTRAP_SERVERS,
@@ -62,4 +63,4 @@ if __name__ == "__main__":
     producer = RideCSVProducer(props=config)
     ride_records = producer.read_records(resource_path=INPUT_DATA_PATH)
     print(ride_records)
-    producer.publish(topic=PRODUCE_TOPIC_RIDES_CSV, records=ride_records)
+    producer.publish(topic=PRODUCE_TOPIC_RIDES_CSV, records=ride_records, sleep_time=args.time)
