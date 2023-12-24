@@ -40,7 +40,7 @@ if __name__ == '__main__':
         'bootstrap_servers': BOOTSTRAP_SERVERS,
         'auto_offset_reset': 'earliest',
         'enable_auto_commit': True,
-        'key_deserializer': lambda key: int(key.decode('utf-8')),
+        'key_deserializer': lambda key: key.decode('utf-8'),
         'value_deserializer': lambda value: value.decode('utf-8'),
         'group_id': 'consumer.group.id.csv-example.1',
     }
