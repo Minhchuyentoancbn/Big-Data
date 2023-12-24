@@ -2,8 +2,9 @@ import argparse
 from typing import Dict, List
 from kafka import KafkaConsumer
 
-from settings import BOOTSTRAP_SERVERS, CONSUME_TOPIC_RIDES_CSV
+from settings import CONSUME_TOPIC_RIDES_CSV
 
+BOOTSTRAP_SERVERS = ['35.220.200.137:9092', ]
 
 class RideCSVConsumer:
     def __init__(self, props: Dict):
@@ -36,7 +37,7 @@ if __name__ == '__main__':
 
     topic = args.topic
     config = {
-        'bootstrap_servers': [BOOTSTRAP_SERVERS],
+        'bootstrap_servers': BOOTSTRAP_SERVERS,
         'auto_offset_reset': 'earliest',
         'enable_auto_commit': True,
         'key_deserializer': lambda key: int(key.decode('utf-8')),
