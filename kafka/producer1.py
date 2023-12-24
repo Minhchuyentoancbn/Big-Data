@@ -22,8 +22,9 @@ def delivery_report(err, msg):
 
 
 class RideCSVProducer:
-    def __init__(self, props: Dict):
+    def __init__(self, props: Dict, pros_csv: Dict):
         self.producer = KafkaProducer(**props)
+        self.producer_csv = KafkaProducer(**pros_csv)
         # self.producer = Producer(producer_props)
 
     @staticmethod
@@ -49,7 +50,7 @@ class RideCSVProducer:
             key, value, value_csv = key_value
             try:
                 record = self.producer.send(topic=PRODUCE_TOPIC_RIDES_JSON, key=key, value=value)
-                record_csv = self.producer.send(topic=PRODUCE_TOPIC_RIDES_CSV, key=key, value=value_csv)
+                record_csv = self.producer_csv.send(topic=PRODUCE_TOPIC_RIDES_CSV, key=key, value=value_csv)
                 # print('Record {} successfully produced at offset {}'.format(key, record.get().offset))
                 # print(f"Producing record for <key: {key}, value:{value}>")
                 print(f"Record {key} successfully produced at offset {record.get().offset} and {record_csv.get().offset}")
@@ -61,6 +62,7 @@ class RideCSVProducer:
             sleep(sleep_time)
 
         self.producer.flush()
+        self.producer_csv.flush()
 
 
 if __name__ == "__main__":
@@ -71,11 +73,17 @@ if __name__ == "__main__":
     config = {
         'bootstrap_servers': BOOTSTRAP_SERVERS,
         'key_serializer': lambda x: str(x).encode('utf-8'),
-        # 'value_serializer': lambda x: x.encode('utf-8'),
         'value_serializer': lambda x: json.dumps(x.__dict__, default=str).encode('utf-8'),
         # 'acks': 'all',
     }
-    producer = RideCSVProducer(props=config)
+    config_csv = {
+        'bootstrap_servers': BOOTSTRAP_SERVERS,
+        'key_serializer': lambda x: str(x).encode('utf-8'),
+        'value_serializer': lambda x: x.encode('utf-8'),
+        # 'acks': 'all',
+    }
+
+    producer = RideCSVProducer(props=config, pros_csv=config_csv)
     ride_records = producer.read_records(resource_path=INPUT_DATA_PATH)
     # print(ride_records)
     print(f"Producing records to topic: {PRODUCE_TOPIC_RIDES_CSV} and {PRODUCE_TOPIC_RIDES_JSON}")
