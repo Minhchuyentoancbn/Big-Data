@@ -1,11 +1,11 @@
 import pyspark.sql.types as T
 
 INPUT_DATA_PATH = './resources/rides_big.csv'
-BOOTSTRAP_SERVERS = ['35.220.200.137:9092', '35.220.200.137:9093', '35.220.200.137.9094']
+BOOTSTRAP_SERVERS = ['35.220.200.137:9092', ]
 
 TOPIC_WINDOWED_VENDOR_ID_COUNT = 'vendor_counts_windowed'
 
-PRODUCE_TOPIC_RIDES_CSV = CONSUME_TOPIC_RIDES_CSV = 'rides_csv_2'
+PRODUCE_TOPIC_RIDES_CSV = CONSUME_TOPIC_RIDES_CSV = 'rides_csv_3'
 
 RIDE_SCHEMA = T.StructType(
     [
