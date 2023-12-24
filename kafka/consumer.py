@@ -11,6 +11,7 @@ KAFKA_BOOTSTRAP_SERVERS = f'{KAFKA_ADDRESS}:9092'
 
 GCP_GCS_BUCKET = "dtc_data_lake_bigdata-405714"
 GCS_STORAGE_PATH = 'gs://' + GCP_GCS_BUCKET + '/realtime'
+CHECKPOINT_PATH = 'gs://' + GCP_GCS_BUCKET + '/realtime/checkpoint/'
 
 RIDE_SCHEMA = T.StructType(
     [
@@ -44,7 +45,7 @@ def read_from_kafka(consume_topic: str):
         .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP_SERVERS) \
         .option("subscribe", consume_topic) \
         .option("startingOffsets", "latest") \
-        .option("checkpointLocation", "/checkpoint") \
+        .option("checkpointLocation", CHECKPOINT_PATH) \
         .option("failOnDataLoss", "false") \
         .load()
     # .option("startingOffsets", "earliest") \
