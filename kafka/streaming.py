@@ -5,7 +5,7 @@ import pyspark.sql.types as T
 import os
 
 KAFKA_ADDRESS= "35.220.200.137"
-TOPIC_WINDOWED_VENDOR_ID_COUNT = 'vendor_counts_windowed_3'
+TOPIC_WINDOWED_VENDOR_ID_COUNT = 'vendor_counts_windowed_2'
 PRODUCE_TOPIC_RIDES_CSV = CONSUME_TOPIC_RIDES_CSV = 'rides_csv_3'
 
 GCP_GCS_BUCKET = "dtc_data_lake_bigdata-405714"
@@ -44,9 +44,10 @@ def read_from_kafka(consume_topic: str):
         .format("kafka") \
         .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP_SERVERS) \
         .option("subscribe", consume_topic) \
-        .option("startingOffsets", "earliest") \
+        .option("startingOffsets", "latest") \
         .option("checkpointLocation", "/checkpoint") \
         .load()
+    # .option("startingOffsets", "earliest") \
     return df_stream
 
 
