@@ -98,6 +98,7 @@ if __name__ == "__main__":
     os.environ['KAFKA_ADDRESS'] = KAFKA_ADDRESS
     os.environ['GCP_GCS_BUCKET'] = 'dtc_data_lake_bigdata-405714'
     spark = SparkSession.builder.appName('streaming-examples').getOrCreate()
+    spark.conf.set('temporaryGcsBucket', 'dataproc-temp-asia-east2-285145462114-ku4fpzno')
     spark.sparkContext.setLogLevel('WARN')
     spark.streams.resetTerminated()
 
