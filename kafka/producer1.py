@@ -67,12 +67,16 @@ if __name__ == "__main__":
     parser.add_argument('--time', type=float, default=0.5, help='time interval between each message')
     args = parser.parse_args(sys.argv[1:])
 
-    client = KafkaAdminClient(bootstrap_servers='localhost:9092')
+    try:
+        client = KafkaAdminClient(bootstrap_servers='localhost:9092')
 
-    rsp = client.create_partitions({
-        PRODUCE_TOPIC_RIDES_CSV: NewPartitions(4)
-    })
-    print(rsp)
+        rsp = client.create_partitions({
+            PRODUCE_TOPIC_RIDES_CSV: NewPartitions(4)
+        })
+        print(rsp)
+    except Exception as e:
+        print(e)
+        pass
 
     config = {
         'bootstrap_servers': BOOTSTRAP_SERVERS,
