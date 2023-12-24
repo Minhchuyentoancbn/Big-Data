@@ -46,7 +46,6 @@ def read_from_kafka(consume_topic: str):
         .option("subscribe", consume_topic) \
         .option("startingOffsets", "earliest") \
         .option("checkpointLocation", "/checkpoint") \
-        .option("failOnDataLoss", "false") \
         .load()
     return df_stream
 
