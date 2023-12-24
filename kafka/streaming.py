@@ -5,26 +5,36 @@ import pyspark.sql.types as T
 import os
 
 KAFKA_ADDRESS= "35.220.200.137"
-INPUT_DATA_PATH = './resources/rides.csv'
-BOOTSTRAP_SERVERS = f'{KAFKA_ADDRESS}:9092'
-
 TOPIC_WINDOWED_VENDOR_ID_COUNT = 'vendor_counts_windowed'
-
-PRODUCE_TOPIC_RIDES_CSV = CONSUME_TOPIC_RIDES_CSV = 'rides_csv'
-
+PRODUCE_TOPIC_RIDES_CSV = CONSUME_TOPIC_RIDES_CSV = 'rides_csv_1'
 
 GCP_GCS_BUCKET = "dtc_data_lake_bigdata-405714"
 GCS_STORAGE_PATH = 'gs://' + GCP_GCS_BUCKET + '/realtime'
 
+KAFKA_BOOTSTRAP_SERVERS = f'{KAFKA_ADDRESS}:9092,,{KAFKA_ADDRESS}:9093,{KAFKA_ADDRESS}:9094,broker1:29092,broker2:29093,broker3:29094'
+
 RIDE_SCHEMA = T.StructType(
-    [T.StructField("vendor_id", T.IntegerType()),
-     T.StructField('tpep_pickup_datetime', T.TimestampType()),
-     T.StructField('tpep_dropoff_datetime', T.TimestampType()),
-     T.StructField("passenger_count", T.IntegerType()),
-     T.StructField("trip_distance", T.FloatType()),
-     T.StructField("payment_type", T.IntegerType()),
-     T.StructField("total_amount", T.FloatType()),
-     ])
+    [
+        T.StructField("vendor_id", T.IntegerType()),
+        T.StructField('tpep_pickup_datetime', T.TimestampType()),
+        T.StructField('tpep_dropoff_datetime', T.TimestampType()),
+        T.StructField("passenger_count", T.IntegerType()),
+        T.StructField("trip_distance", T.FloatType()),
+        T.StructField("RatecodeID", T.IntegerType()),
+        T.StructField("store_and_fwd_flag", T.StringType()),
+        T.StructField("PULocationID", T.IntegerType()),
+        T.StructField("DOLocationID", T.IntegerType()),
+        T.StructField("payment_type", T.IntegerType()),
+        T.StructField("fare_amount", T.FloatType()),
+        T.StructField("extra", T.FloatType()),
+        T.StructField("mta_tax", T.FloatType()),
+        T.StructField("tip_amount", T.FloatType()),
+        T.StructField("tolls_amount", T.FloatType()),
+        T.StructField("improvement_surcharge", T.FloatType()),
+        T.StructField("total_amount", T.FloatType()),
+        T.StructField("congestion_surcharge", T.FloatType()),
+    ]
+)
 
 
 def read_from_kafka(consume_topic: str):
@@ -32,7 +42,7 @@ def read_from_kafka(consume_topic: str):
     df_stream = spark \
         .readStream \
         .format("kafka") \
-        .option("kafka.bootstrap.servers", f"{KAFKA_ADDRESS}:9092,broker1:29092") \
+        .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP_SERVERS) \
         .option("subscribe", consume_topic) \
         .option("startingOffsets", "earliest") \
         .option("checkpointLocation", "checkpoint") \
@@ -79,7 +89,7 @@ def sink_memory(df, query_name, query_template):
 def sink_kafka(df, topic):
     write_query = df.writeStream \
         .format("kafka") \
-        .option("kafka.bootstrap.servers", f"{KAFKA_ADDRESS}:9092,broker1:29092") \
+        .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP_SERVERS) \
         .outputMode('complete') \
         .option("topic", topic) \
         .option("checkpointLocation", "checkpoint") \
@@ -113,7 +123,6 @@ def op_windowed_groupby(df, window_duration, slide_duration):
 if __name__ == "__main__":
     os.environ['KAFKA_ADDRESS'] = KAFKA_ADDRESS
     os.environ['GCP_GCS_BUCKET'] = 'dtc_data_lake_bigdata-405714'
-    # os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.1,org.apache.spark:spark-avro_2.12:3.3.1 pyspark-shell'
 
     spark = SparkSession.builder.appName('streaming-examples').getOrCreate()
     # spark.conf.set('temporaryGcsBucket', 'dataproc-temp-asia-east2-285145462114-ku4fpzno')
