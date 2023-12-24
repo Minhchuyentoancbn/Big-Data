@@ -1,11 +1,14 @@
 import csv
+import json
 import sys
 import argparse
 from time import sleep
 from typing import Dict
+from ride import Ride
 from kafka import KafkaProducer
 
-from settings import PRODUCE_TOPIC_RIDES_CSV
+PRODUCE_TOPIC_RIDES_CSV = 'rides_csv_4'
+PRODUCE_TOPIC_RIDES_JSON = 'rides_json'
 
 INPUT_DATA_PATH = './resources/rides1.csv'
 BOOTSTRAP_SERVERS = ['35.220.200.137:9092', ]
@@ -25,26 +28,31 @@ class RideCSVProducer:
 
     @staticmethod
     def read_records(resource_path: str):
-        records, ride_keys = [], []
+        records, records_csv, ride_keys = [], [], []
         with open(resource_path, 'r') as f:
             reader = csv.reader(f)
             header = next(reader)  # skip the header
             i = 0
             for row in reader:
                 # vendor_id, passenger_count, trip_distance, payment_type, total_amount
-                records.append(f'{row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]}, {row[5]}, {row[6]}, {row[7]}, {row[8]}, {row[9]}, {row[10]}, {row[11]}, {row[12]}, {row[13]}, {row[14]}, {row[15]}, {row[16]}, {row[17]}')
+                records_csv.append(f'{row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]}, {row[5]}, {row[6]}, {row[7]}, {row[8]}, {row[9]}, {row[10]}, {row[11]}, {row[12]}, {row[13]}, {row[14]}, {row[15]}, {row[16]}, {row[17]}')
+                records.append(Ride(arr=row))
                 ride_keys.append(str(row[1]) + '-' + str(row[7]))
+
                 i += 1
                 if i == 1000:
                     break
-        return zip(ride_keys, records)
+        return zip(ride_keys, records, records_csv)
 
-    def publish(self, topic: str, records: [str, str], sleep_time: float = 0.5):
+    def publish(self, records: [str, str], sleep_time: float = 0.5):
         for key_value in records:
-            key, value = key_value
+            key, value, value_csv = key_value
             try:
-                self.producer.send(topic=topic, key=key, value=value)
-                print(f"Producing record for <key: {key}, value:{value}>")
+                record = self.producer.send(topic=PRODUCE_TOPIC_RIDES_JSON, key=key, value=value)
+                record_csv = self.producer.send(topic=PRODUCE_TOPIC_RIDES_CSV, key=key, value=value_csv)
+                # print('Record {} successfully produced at offset {}'.format(key, record.get().offset))
+                # print(f"Producing record for <key: {key}, value:{value}>")
+                print(f"Record {key} successfully produced at offset {record.get().offset} and {record_csv.get().offset}")
             except KeyboardInterrupt:
                 break
             except Exception as e:
@@ -62,11 +70,13 @@ if __name__ == "__main__":
 
     config = {
         'bootstrap_servers': BOOTSTRAP_SERVERS,
-        'key_serializer': lambda x: x.encode('utf-8'),
-        'value_serializer': lambda x: x.encode('utf-8'),
+        'key_serializer': lambda x: str(x).encode('utf-8'),
+        # 'value_serializer': lambda x: x.encode('utf-8'),
+        'value_serializer': lambda x: json.dumps(x.__dict__, default=str).encode('utf-8'),
         # 'acks': 'all',
     }
     producer = RideCSVProducer(props=config)
     ride_records = producer.read_records(resource_path=INPUT_DATA_PATH)
-    print(ride_records)
-    producer.publish(topic=PRODUCE_TOPIC_RIDES_CSV, records=ride_records, sleep_time=args.time)
+    # print(ride_records)
+    print(f"Producing records to topic: {PRODUCE_TOPIC_RIDES_CSV} and {PRODUCE_TOPIC_RIDES_JSON}")
+    producer.publish(records=ride_records, sleep_time=args.time)

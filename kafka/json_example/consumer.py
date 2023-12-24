@@ -2,7 +2,7 @@ from typing import Dict, List
 from json import loads
 from kafka import KafkaConsumer
 
-from ride import Ride
+from kafka.ride import Ride
 from settings import BOOTSTRAP_SERVERS, KAFKA_TOPIC
 
 

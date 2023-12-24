@@ -4,7 +4,7 @@ from typing import List, Dict
 from kafka import KafkaProducer
 from kafka.errors import KafkaTimeoutError
 
-from ride import Ride
+from kafka.ride import Ride
 from settings import BOOTSTRAP_SERVERS, INPUT_DATA_PATH, KAFKA_TOPIC
 
 
