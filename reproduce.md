@@ -5,7 +5,9 @@
    - [1.1. Google Cloud Platform (GCP)](#11-google-cloud-platform-gcp)
    - [1.2. Terraform](#12-terraform)
 - [2. Prefect, Docker and Cloud Run](#2-prefect-docker-and-cloud-run)
-- [3]
+- [3. Analytics Engineering](#3-analytics-engineering)
+- [4. Spark ETL](#4-spark-etl)
+- [5. Kafka](#5-kafka)
 
 
 ## 1. Google Cloud Platform and Terraform
@@ -28,10 +30,15 @@ __Setup for Access__
    * Go to the *IAM* section of *IAM & Admin* https://console.cloud.google.com/iam-admin/iam
    * Click the *Edit principal* icon for your service account.
    * Add these roles in addition to *Viewer* : **Storage Admin** + **Storage Object Admin** + **BigQuery Admin**  + **Service Account User**  + **Cloud Run Admin** + **Artifact Registry Administrator** + **Artifact Registry Repository Administrator**
+
+   _NOTE: You might need to add more roles depending on your use case._
+
    
 - 2.Enable these APIs for your project:
    * https://console.cloud.google.com/apis/library/iam.googleapis.com
    * https://console.cloud.google.com/apis/library/iamcredentials.googleapis.com
+
+   _NOTE: You might need to enable more APIs depending on your use case._
    
 - 3.Please ensure `GOOGLE_APPLICATION_CREDENTIALS` env-var is set.
    ```shell
@@ -84,7 +91,6 @@ Run prefect then go to the app to see the dashboard.
 prefect cloud login
 ```
 
-
 ### 2.2. From Web to Google Cloud Storage (GCS)
 
 Add a GCP Bucket Block and GCP Credentials Block (Optional) in the Prefect UI.
@@ -124,7 +130,6 @@ Then run the `Work Queues` as below:
 prefect agent start --work-queue "default"
 ```
 
-
 ### 2.4. Schedules & Docker Storage with Infrastructure
 
 Build Docker image:
@@ -136,13 +141,6 @@ Push Docker image to Docker Hub:
 ```bash
 docker image push itgaming/bigdata-project:latest
 ```
-
-Run Docker image:
-```bash
-# Exmaple for debugging
-docker run --rm -it --entrypoint bash -e PREFECT_API_URL="https://api.prefect.cloud/api/accounts/84dd3f9a-1c11-42e7-bad7-e318173cc5a4/workspaces/3ee41cd4-af20-496d-a9f1-56bd7779db5d" -e PREFECT_API_KEY=pnu_V19kAXsXkdG4aZTGw8cbUlxWQ84VEh2gIsCw itgaming/bigdata-project:latest
-```
-
 
 ### 2.5. Serverless Prefect Flows with Google Cloud Run Jobs
 
@@ -178,37 +176,15 @@ prefect deployment run "el-parent-gcs-to-bq/Cloud Run ETL GCS to BQ" -p "months=
 ```
 
 
-## 3. Data Warehouse
+## 3. Analytics Engineering
 
 - See the [SQL](./big_query/big_query.sql) file for the SQL queries.
-
-
 - Go to [this link](https://lookerstudio.google.com/s/rW6QzYH8BKo) to see the dashboard.
 
 
-## 5. Batch Processing
-
-- Go to `localhost:4040` to see the Spark UI.
-- To prepare the data, run the following command:
-```bash
-# Run the script
-./download_data.sh yellow 2020
-./download_data.sh green 2020
-./download_data.sh yellow 2021
-./download_data.sh green 2021
-
-# Prepare the data
-python spark/taxi_schema.py
-```
+## 4. Spark ETL
 
 - Go to [this link](https://cloud.google.com/dataproc/docs/concepts/connectors/cloud-storage) to download the connector and put it in the `spark/jars` folder.
-
-- Upload the data to GCS:
-```bash
-# Upload the data to GCS
-gsutil -m cp -r data/pq/ gs://dtc_data_lake_bigdata-405714/pq
-```
-
 - Create a Dataproc cluster in GCP and a bucket `code` in GCS.
 - Upload the code to GCS:
 ```bash
@@ -216,13 +192,24 @@ gsutil -m cp -r data/pq/ gs://dtc_data_lake_bigdata-405714/pq
 gsutil cp spark/spark_sql.py gs://bigdata-code/spark_sql.py
 gsutil cp spark/spark_sql_big_query.py gs://bigdata-code/spark_sql_big_query.py
 
-
+# Submit the job to Dataproc
 gcloud dataproc jobs submit pyspark  --cluster=bigdata-cluster --region=asia-east2 --jars=gs://spark-lib/bigquery/spark-bigquery-latest_2.12.jar clean_data.py -- -- --input_table=all
 
-gcloud dataproc jobs submit pyspark  --cluster=bigdata-cluster --region=asia-east2 --jars=gs://spark-lib/bigquery/spark-bigquery-latest_2.12.jar preprocess.py -- -- --dataset=production
+gcloud dataproc jobs submit pyspark  --cluster=bigdata-cluster --region=asia-east2 --jars=gs://spark-lib/bigquery/spark-bigquery-latest_2.12.jar create_dims.py -- -- --dataset=production
+
+gcloud dataproc jobs submit pyspark  --cluster=bigdata-cluster --region=asia-east2 --jars=gs://spark-lib/bigquery/spark-bigquery-latest_2.12.jar create_fact.py -- -- --dataset=production
 ```
 
-## 6. Stream Processing
+- To see the Spark UI:
+```bash
+gcloud compute ssh bigdata-cluster-m --project=bigdata-405714 --zone=asia-east2-a -- -D 1080 -N
+
+cd "C:\Program Files\Google\Chrome\Application"
+
+chrome.exe --proxy-server="socks5://localhost:1080" --user-data-dir="%Temp%\bigdata-cluster-m" http://bigdata-cluster-m:8088
+```
+
+## 5. Kafka
 
 Run the following command to setup Kafka and Zookeeper:
 ```bash
@@ -247,6 +234,10 @@ docker-compose up -d
 # Turn off kafka
 docker-compose down
 
+# Start producer
+python producer1.py
+python producer2.py
+
 # Connect to spark instance
 gcloud compute ssh bigdata-cluster-m
 
@@ -255,7 +246,8 @@ export KAFKA_ADDRESS=35.220.200.137
 export GCP_GCS_BUCKET=dtc_data_lake_bigdata-405714
 
 # Clone the repo
-git clone https://github.com/Minhchuyentoancbn/Big-Data.git
+sudo git clone https://github.com/Minhchuyentoancbn/Big-Data.git
 
-spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.3 streaming.py
+# Run consumer
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.3 --jars=gs://spark-lib/bigquery/spark-bigquery-latest_2.12.jar consumer.py
 ```
